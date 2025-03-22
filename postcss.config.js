@@ -1,5 +1,4 @@
-// postcss.config.js (✅ 수정 버전)
-module.exports = {
+export default {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},

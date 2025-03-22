@@ -1,5 +1,5 @@
 {
-  "name": "rc-kiosk-app",
+  "name": "gift-kiosk-app",
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",
