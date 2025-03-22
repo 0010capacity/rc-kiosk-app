@@ -4,7 +4,7 @@ import AdminPage from "./pages/AdminPage";
 
 function App() {
   return (
-    <Router>
+    <Router basename="/rc-kiosk-app">
       <Routes>
         <Route path="/" element={<ProductSelector />} />
         <Route path="/admin" element={<AdminPage />} />
