@@ -41,49 +41,64 @@ export default function ProductSelector() {
   };
 
   return (
-    <div className="max-w-xl mx-auto space-y-4 p-6">
-      <h1 className="text-xl font-semibold">기념품 선택</h1>
+    <div className="max-w-md mx-auto space-y-6 p-6">
+      <h1 className="text-xl font-semibold text-center">기념품 선택</h1>
 
+      {/* 이름 입력 */}
       <div>
         <label className="block text-sm font-medium mb-1">이름</label>
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="이름을 입력하세요" />
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="이름을 입력하세요"
+        />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="border p-4 rounded-md space-y-2">
-          <h2 className="font-semibold mb-2">A 품목</h2>
+      {/* A 품목 */}
+      <div className="border p-4 rounded-lg space-y-3">
+        <h2 className="font-semibold">A 품목 (1개 선택)</h2>
+        <div className="grid grid-cols-2 gap-3">
           {aItems.map((item) => (
             <Button
               key={item}
               variant="ghost"
               onClick={() => handleSelect(item, "A")}
-              className="w-full"
+              className="flex flex-col items-center gap-2 p-3 border rounded-md"
             >
-              {item}
-            </Button>
-          ))}
-        </div>
-
-        <div className="border p-4 rounded-md space-y-2">
-          <h2 className="font-semibold mb-2">B 품목</h2>
-          {bItems.map((item) => (
-            <Button
-              key={item}
-              variant="ghost"
-              onClick={() => handleSelect(item, "B")}
-              className="w-full"
-            >
-              {item}
+              <div className="w-20 h-20 bg-gray-200 rounded" />
+              <span className="text-sm">{item}</span>
             </Button>
           ))}
         </div>
       </div>
 
+      {/* B 품목 */}
+      <div className="border p-4 rounded-lg space-y-3">
+        <h2 className="font-semibold">B 품목 (최대 2개 또는 A 1 + B 1)</h2>
+        <div className="grid grid-cols-2 gap-3">
+          {bItems.map((item) => (
+            <Button
+              key={item}
+              variant="ghost"
+              onClick={() => handleSelect(item, "B")}
+              className="flex flex-col items-center gap-2 p-3 border rounded-md"
+            >
+              <div className="w-20 h-20 bg-gray-200 rounded" />
+              <span className="text-sm">{item}</span>
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* 선택 목록 */}
       <div className="space-y-2">
         <h2 className="font-semibold">선택된 기념품</h2>
         <div className="flex flex-wrap gap-2">
           {selected.map((item, index) => (
-            <div key={index} className="flex items-center bg-gray-100 px-3 py-1 rounded-full text-sm">
+            <div
+              key={index}
+              className="flex items-center bg-gray-100 px-3 py-1 rounded-full text-sm"
+            >
               {item.name}
               <button
                 className="ml-2 text-gray-500 hover:text-red-500"
@@ -96,13 +111,15 @@ export default function ProductSelector() {
         </div>
       </div>
 
-      <div className="flex gap-4 pt-4">
-        <Button onClick={handleReset} variant="ghost">
+      {/* 하단 버튼 */}
+      <div className="flex justify-end gap-4 pt-4">
+        <Button onClick={handleReset} variant="ghost" className="px-6 py-2">
           초기화
         </Button>
         <Button
           onClick={handleConfirm}
           disabled={selected.length !== 2 || name.trim() === ""}
+          className="px-6 py-2"
         >
           확인
         </Button>
