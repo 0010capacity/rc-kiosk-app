@@ -51,7 +51,7 @@ export default function ProductSelector() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="border p-4 rounded-md space-y-2">
-          <h2 className="font-semibold mb-2">A 품목 (1개)</h2>
+          <h2 className="font-semibold mb-2">A 품목</h2>
           {aItems.map((item) => (
             <Button
               key={item}
@@ -65,7 +65,7 @@ export default function ProductSelector() {
         </div>
 
         <div className="border p-4 rounded-md space-y-2">
-          <h2 className="font-semibold mb-2">B 품목 (최대 2개 또는 A 1 + B 1)</h2>
+          <h2 className="font-semibold mb-2">B 품목</h2>
           {bItems.map((item) => (
             <Button
               key={item}
