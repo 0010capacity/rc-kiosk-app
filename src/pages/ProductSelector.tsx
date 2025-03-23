@@ -149,6 +149,14 @@ export default function ProductSelector() {
         <div className="w-full aspect-[2/1] bg-gray-200 rounded" />
       )}
       <span className="text-sm text-center">{item.name}<span
+      {item.description && (
+        <div className="relative group ml-2 cursor-help">
+          <span className="text-xs text-gray-400 group-hover:underline">ℹ️</span>
+          <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 w-48 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+            {item.description}
+          </div>
+        </div>
+      )}
   onClick={() => item.description && alert(item.description)}
   className="ml-1 cursor-pointer text-blue-500 hover:underline"
   title="기념품 설명 보기"
