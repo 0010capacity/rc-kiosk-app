@@ -1,5 +1,3 @@
-<h1 style={{ color: 'black' }}>기념품 선택 페이지입니다</h1>
-
 import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
