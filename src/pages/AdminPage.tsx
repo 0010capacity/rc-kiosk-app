@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 interface GiftRecord {
@@ -14,17 +14,12 @@ export default function AdminPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "giftData"));
-        const data = snapshot.docs.map((doc) => doc.data() as GiftRecord);
-        setRecords(data);
-      } catch (error) {
-        console.error("데이터 불러오기 오류:", error);
-      }
-    };
+    const unsubscribe = onSnapshot(collection(db, "giftData"), (snapshot) => {
+      const data = snapshot.docs.map((doc) => doc.data() as GiftRecord);
+      setRecords(data);
+    });
 
-    fetchData();
+    return () => unsubscribe();
   }, []);
 
   return (
