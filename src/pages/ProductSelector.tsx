@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 interface GiftItem {
@@ -12,6 +13,7 @@ interface GiftItem {
   name: string;
   category: "A" | "B";
   image_url?: string;
+  description?: string;
   allow_multiple?: boolean;
 }
 
@@ -19,29 +21,26 @@ export default function ProductSelector() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [userName, setUserName] = useState<string>("");
   const [giftItems, setGiftItems] = useState<GiftItem[]>([]);
+  const [showTooltipId, setShowTooltipId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchGiftItems() {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("gift_items")
         .select("*")
-        .order("category", { ascending: true })
-        .order("sort_order", { ascending: true });
+        .eq("visible", true)
+        .order("category")
+        .order("sort_order");
 
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      setGiftItems(data as GiftItem[]);
+      setGiftItems((data as GiftItem[]) || []);
     }
 
     fetchGiftItems();
   }, []);
 
-  const aItems = giftItems.filter((item) => item.category === "A" && item.visible !== false);
-  const bItems = giftItems.filter((item) => item.category === "B" && item.visible !== false);
+  const aItems = giftItems.filter((item) => item.category === "A");
+  const bItems = giftItems.filter((item) => item.category === "B");
 
   const countA = selectedItems.filter((item) =>
     aItems.some((a) => a.name === item)
@@ -50,26 +49,17 @@ export default function ProductSelector() {
     bItems.some((b) => b.name === item)
   ).length;
 
-  const isValidSelection = (itemName: string) => {
-    const item = giftItems.find((i) => i.name === itemName);
-    if (!item) return false;
+  const isValidSelection = (item: string) => {
+    const match = giftItems.find((i) => i.name === item);
+    if (!match) return false;
 
-    const total = selectedItems.length;
-
-    if (item.category === "A") {
-      if (item.allow_multiple) {
-        const sameCount = selectedItems.filter((n) => n === item.name).length;
-        return sameCount < 2 && total < 2;
-      } else {
-        return countA < 1 && total < 2;
-      }
+    if (match.category === "A") {
+      const count = selectedItems.filter((i) => i === item).length;
+      const max = match.allow_multiple ? 2 : 1;
+      return count < max && selectedItems.length < 2;
+    } else {
+      return selectedItems.length < 2;
     }
-
-    if (item.category === "B") {
-      return total < 2;
-    }
-
-    return false;
   };
 
   const handleSelect = (item: string) => {
@@ -93,7 +83,7 @@ export default function ProductSelector() {
   };
 
   const handleSubmit = async () => {
-    if (!canSubmit) return;
+    if (selectedItems.length !== 2 || !userName.trim()) return;
 
     const { error } = await supabase.from("gift_records").insert([
       {
@@ -103,14 +93,12 @@ export default function ProductSelector() {
       },
     ]);
 
-    if (error) {
+    if (!error) {
+      alert(`${userName}님 선택 완료!`);
+      handleReset();
+    } else {
       console.error("저장 실패:", error);
-      alert("저장에 실패했습니다. 다시 시도해주세요.");
-      return;
     }
-
-    alert(`${userName}님 선택 완료!`);
-    handleReset();
   };
 
   const getItemCounts = (items: string[]) => {
@@ -130,76 +118,37 @@ export default function ProductSelector() {
       onClick={() => handleSelect(item.name)}
       disabled={!isValidSelection(item.name)}
       variant="outline"
-      className="flex flex-col items-center space-y-2 p-3 h-auto relative"
+      className="flex flex-col items-center space-y-2 p-3 h-36 relative"
+      onTouchStart={() => setShowTooltipId(item.id)}
+      onMouseEnter={() => setShowTooltipId(item.id)}
+      onMouseLeave={() => setShowTooltipId(null)}
     >
-      {/* ✅ 뱃지 표시 */}
-      {item.allow_multiple && (
-        <span className="absolute top-1 right-1 text-[10px] bg-yellow-300 text-gray-800 px-1.5 py-0.5 rounded font-medium shadow-sm">
-          🔁 중복 선택 가능
-        </span>
-      )}
-
-      {item.image_url ? (
-        <img
-          src={item.image_url}
-          alt={item.name}
-          className="w-full aspect-[2/1] object-contain bg-white rounded"
-        />
-      ) : (
-        <div className="w-full aspect-[2/1] bg-gray-200 rounded" />
-      )}
-      <span className="text-sm text-center">{item.name}<span
-      {item.description && (
-        <div className="relative group ml-2 cursor-help">
-          <span className="text-xs text-gray-400 group-hover:underline">ℹ️</span>
-          <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 w-48 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
-            {item.description}
+      <div className="w-32 h-16 bg-gray-200 rounded shadow-inner" />
+      <div className="flex items-center gap-1 justify-center">
+        <span className="text-sm text-center">{item.name}</span>
+        {item.description && (
+          <div className="relative group cursor-help">
+            <span className="text-xs text-gray-400 group-hover:underline">ℹ️</span>
+            {(showTooltipId === item.id) && (
+              <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 w-48 bg-black text-white text-xs rounded px-2 py-1 z-10 pointer-events-none whitespace-pre-line text-center">
+                {item.description}
+              </div>
+            )}
           </div>
-        </div>
-      )}
-  onClick={() => item.description && alert(item.description)}
-  className="ml-1 cursor-pointer text-blue-500 hover:underline"
-  title="기념품 설명 보기"
->
-  ℹ️
-</span></span>
+        )}
+      </div>
     </Button>
   );
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      {/* ✅ 헤더 및 관리자 페이지 이동 */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">기념품 선택</h1>
         <Button variant="subtle" onClick={() => navigate("/admin")}>
-          관리자 메뉴
+          관리자 페이지
         </Button>
       </div>
 
-      {/* ✅ 선택 안내 (개조식 + 예외 표기) */}
-      <div className="rounded border p-3 bg-blue-50 text-sm text-blue-800 space-y-1">
-        <p className="font-medium">🎯 선택 기준</p>
-        <ul className="list-disc pl-5 space-y-1">
-          <li>A 품목 1개 + B 품목 1개 선택 가능</li>
-          <li>또는 B 품목 2개 선택 가능</li>
-        </ul>
-        {aItems.some((i) => i.allow_multiple) && (
-          <>
-            <p className="font-medium pt-2">📌 예외 사항</p>
-            <ul className="list-disc pl-5">
-              <li>
-                아래 A 품목은 동일 품목을 2개까지 선택하실 수 있습니다:&nbsp;
-                {aItems
-                  .filter((i) => i.allow_multiple)
-                  .map((i) => `‘${i.name}’`)
-                  .join(", ")}
-              </li>
-            </ul>
-          </>
-        )}
-      </div>
-
-      {/* ✅ 사용자 이름 입력 */}
       <div className="flex flex-col items-center gap-2">
         <label htmlFor="username" className="text-gray-700 font-medium">
           이름을 입력하세요
@@ -213,18 +162,20 @@ export default function ProductSelector() {
         />
       </div>
 
-      {/* ✅ A / B 품목 선택 */}
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">A 품목</h2>
-        <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
+        <div className="grid grid-cols-2 gap-4">
+          {aItems.map(renderItemCard)}
+        </div>
       </div>
 
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">B 품목</h2>
-        <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
+        <div className="grid grid-cols-2 gap-4">
+          {bItems.map(renderItemCard)}
+        </div>
       </div>
 
-      {/* ✅ 선택된 항목 요약 */}
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">선택된 기념품</h2>
         <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
@@ -237,9 +188,7 @@ export default function ProductSelector() {
                   key={index}
                   className="flex items-center justify-between gap-3 p-2 border rounded-lg bg-gray-50 shadow-inner"
                 >
-                  <div className="text-gray-700 text-sm font-medium">
-                    {item} {count > 1 ? `x${count}` : ""}
-                  </div>
+                  <div className="text-gray-700 text-sm font-medium">{item} {count > 1 ? `x${count}` : ""}</div>
                   <button
                     onClick={() => handleRemove(item)}
                     className="text-gray-400 hover:text-red-500"
@@ -253,9 +202,8 @@ export default function ProductSelector() {
         </div>
       </div>
 
-      {/* ✅ 하단 버튼 */}
       <div className="flex justify-between gap-4">
-        <Button onClick={handleReset} variant="subtle" className="w-1/2">
+        <Button onClick={handleReset} variant="secondary" className="w-1/2">
           초기화
         </Button>
         <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">
