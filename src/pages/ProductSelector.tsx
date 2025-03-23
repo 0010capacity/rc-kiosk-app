@@ -17,6 +17,8 @@ interface GiftItem {
   allow_multiple?: boolean;
 }
 
+// 생략: import 및 Supabase 설정은 기존과 동일
+
 export default function ProductSelector() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [userName, setUserName] = useState<string>("");
@@ -119,30 +121,38 @@ export default function ProductSelector() {
       disabled={!isValidSelection(item.name)}
       variant="outline"
       className="flex flex-col items-center space-y-2 p-3 h-36 relative"
-      onTouchStart={() => setShowTooltipId(item.id)}
-      onMouseEnter={() => setShowTooltipId(item.id)}
       onMouseLeave={() => setShowTooltipId(null)}
     >
-      {item.image_url ? (
-        <img
-          src={item.image_url}
-          alt={item.name}
-          className="w-32 h-16 object-contain rounded shadow-inner"
-        />
-      ) : (
-        <div className="w-32 h-16 bg-gray-200 rounded shadow-inner" />
-      )}
+      <div
+        className="relative w-32 h-16"
+        onTouchStart={() => setShowTooltipId(item.id)}
+        onMouseEnter={() => setShowTooltipId(item.id)}
+      >
+        {item.image_url ? (
+          <img
+            src={item.image_url}
+            alt={item.name}
+            className="w-full h-full object-contain rounded shadow-inner"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 rounded shadow-inner" />
+        )}
+        {item.description && showTooltipId === item.id && (
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-1 w-48 bg-black text-white text-xs rounded px-2 py-1 z-10 pointer-events-none text-center">
+            {item.description}
+          </div>
+        )}
+      </div>
 
-      <div className="flex items-center gap-1 justify-center relative w-full">
+      <div className="flex items-center gap-1 justify-center mt-2">
         <span className="text-sm text-center">{item.name}</span>
         {item.description && (
-          <div className="group cursor-help relative">
-            <span className="text-xs text-gray-400 group-hover:underline">ℹ️</span>
-            {showTooltipId === item.id && (
-              <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 w-48 bg-black text-white text-xs rounded px-2 py-1 z-10 pointer-events-none whitespace-pre-line text-center">
-                {item.description}
-              </div>
-            )}
+          <div
+            className="cursor-help text-xs text-gray-400"
+            onMouseEnter={() => setShowTooltipId(item.id)}
+            onTouchStart={() => setShowTooltipId(item.id)}
+          >
+            ℹ️
           </div>
         )}
       </div>
