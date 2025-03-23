@@ -1,17 +1,17 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ClipboardList, PackageOpen } from "lucide-react";
 
 export default function AdminPage() {
   const navigate = useNavigate();
-import { useEffect } from "react";
 
-useEffect(() => {
-  const isAdmin = sessionStorage.getItem("isAdmin");
-  if (isAdmin !== "true") {
-    navigate("/admin-login");
-  }
-}, []);
+  useEffect(() => {
+    const isAdmin = sessionStorage.getItem("isAdmin");
+    if (isAdmin !== "true") {
+      navigate("/admin-login");
+    }
+  }, []);
 
 
   return (
