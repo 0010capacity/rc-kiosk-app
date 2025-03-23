@@ -33,7 +33,10 @@ export default function AdminLogin() {
         <Button type="submit" className="w-full">
           로그인
         </Button>
-      </form>
+        <Button type="button" variant="subtle" onClick={() => navigate("/")} className="w-full mt-2">
+    돌아가기
+  </Button>
+</form>
     </div>
   );
 }
