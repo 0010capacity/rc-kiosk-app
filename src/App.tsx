@@ -1,10 +1,10 @@
-import { HashRouter,  HashRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ProductSelector from "./pages/ProductSelector";
 import AdminPage from "./pages/AdminPage";
 
 function App() {
   return (
-    <Router basename="/rc-kiosk-app">
+    <Router>
       <Routes>
         <Route path="/" element={<ProductSelector />} />
         <Route path="/admin" element={<AdminPage />} />
