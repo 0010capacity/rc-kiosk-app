@@ -241,7 +241,7 @@ export default function ProductSelector() {
 
       {/* ✅ 하단 버튼 */}
       <div className="flex justify-between gap-4">
-        <Button onClick={handleReset} variant="secondary" className="w-1/2">
+        <Button onClick={handleReset} variant="subtle" className="w-1/2">
           초기화
         </Button>
         <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">

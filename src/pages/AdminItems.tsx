@@ -257,10 +257,12 @@ export default function AdminItems() {
             onChange={(e) => setImageFile(e.target.files?.[0] || null)}
           />
         </label>
-        <Button onClick={handleAdd}>기념품 추가</Button>
+        <Button onClick={handleAdd} className="px-6 py-2">기념품 추가</Button>
       </div>
 
-      <DragDropContext onDragEnd={handleDragEnd}>
+      <hr className="my-6 border-t border-gray-300" />
+
+<DragDropContext onDragEnd={handleDragEnd}>
         {renderCategory("A")}
         {renderCategory("B")}
       </DragDropContext>

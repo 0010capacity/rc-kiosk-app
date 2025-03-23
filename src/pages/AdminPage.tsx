@@ -11,7 +11,7 @@ export default function AdminPage() {
         <h1 className="text-2xl font-bold text-gray-800">관리자 페이지</h1>
         <Button
           onClick={() => navigate("/")}
-          variant="secondary"
+          variant="subtle"
           size="sm"
           className="flex items-center gap-1"
         >
@@ -23,7 +23,7 @@ export default function AdminPage() {
       <div className="grid gap-4">
         <Button
           className="w-full justify-start gap-3 text-left"
-          variant="outline"
+          variant="default"
           onClick={() => navigate("/admin/records")}
         >
           <ClipboardList size={18} />
@@ -32,7 +32,7 @@ export default function AdminPage() {
 
         <Button
           className="w-full justify-start gap-3 text-left"
-          variant="outline"
+          variant="default"
           onClick={() => navigate("/admin/items")}
         >
           <PackageOpen size={18} />
