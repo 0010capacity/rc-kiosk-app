@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { X } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // ✅ 추가
 
 const aItems = [
   { name: "영화관람권" },
@@ -20,6 +21,7 @@ const bItems = [
 export default function ProductSelector() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [userName, setUserName] = useState<string>("");
+  const navigate = useNavigate(); // ✅ 추가
 
   const isA = (item: string) => aItems.map(i => i.name).includes(item);
   const isB = (item: string) => bItems.map(i => i.name).includes(item);
@@ -83,7 +85,9 @@ export default function ProductSelector() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
       <h1 className="text-3xl font-bold text-center text-gray-800">기념품 선택</h1>
-
+      <Button variant="ghost" onClick={() => navigate("/admin")}>
+        관리자 페이지
+      </Button>
       <div className="flex flex-col items-center gap-2">
         <label htmlFor="username" className="text-gray-700 font-medium">이름을 입력하세요</label>
         <Input
