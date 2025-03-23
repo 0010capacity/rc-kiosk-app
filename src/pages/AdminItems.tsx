@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Upload } from "lucide-react";
+import { Trash2, Upload, GripVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "react-beautiful-dnd";
 
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
@@ -27,6 +33,7 @@ export default function AdminItems() {
     const { data, error } = await supabase
       .from("gift_items")
       .select("*")
+      .order("category", { ascending: true })
       .order("sort_order", { ascending: true });
 
     if (error) {
@@ -67,6 +74,7 @@ export default function AdminItems() {
     const { data: maxItem } = await supabase
       .from("gift_items")
       .select("sort_order")
+      .eq("category", category)
       .order("sort_order", { ascending: false })
       .limit(1);
 
@@ -100,29 +108,94 @@ export default function AdminItems() {
     }
   };
 
-  const moveItem = async (index: number, direction: "up" | "down") => {
-    const newItems = [...items];
-    const targetIndex = direction === "up" ? index - 1 : index + 1;
+  const handleDragEnd = async (result: DropResult) => {
+    const { source, destination, type } = result;
+    if (!destination || source.index === destination.index) return;
 
-    if (targetIndex < 0 || targetIndex >= newItems.length) return;
+    const category = type as "A" | "B";
+    const categoryItems = items
+      .filter((item) => item.category === category)
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-    const currentItem = newItems[index];
-    const targetItem = newItems[targetIndex];
+    const reordered = [...categoryItems];
+    const [moved] = reordered.splice(source.index, 1);
+    reordered.splice(destination.index, 0, moved);
 
-    // sort_order 서로 교환
-    const { error: error1 } = await supabase
-      .from("gift_items")
-      .update({ sort_order: targetItem.sort_order })
-      .eq("id", currentItem.id);
+    const updates = reordered.map((item, index) => ({
+      id: item.id,
+      sort_order: index + 1,
+    }));
 
-    const { error: error2 } = await supabase
-      .from("gift_items")
-      .update({ sort_order: currentItem.sort_order })
-      .eq("id", targetItem.id);
+    await Promise.all(
+      updates.map((u) =>
+        supabase.from("gift_items").update({ sort_order: u.sort_order }).eq("id", u.id)
+      )
+    );
 
-    if (!error1 && !error2) {
-      fetchItems();
-    }
+    fetchItems();
+  };
+
+  const renderCategory = (category: "A" | "B") => {
+    const filtered = items
+      .filter((item) => item.category === category)
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
+    return (
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-2">{category} 품목</h2>
+        <Droppable droppableId={category} type={category}>
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="grid grid-cols-2 gap-4"
+            >
+              {filtered.map((item, index) => (
+                <Draggable draggableId={item.id} index={index} key={item.id}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      className={`border p-4 rounded relative flex flex-col items-center text-center transition-transform duration-200 ease-in-out ${
+                        snapshot.isDragging ? "scale-105 shadow-lg" : ""
+                      }`}
+                    >
+                      {/* 👇 잡기 손잡이 */}
+                      <div
+                        {...provided.dragHandleProps}
+                        className="absolute top-2 left-2 text-gray-400 cursor-grab active:cursor-grabbing"
+                        title="드래그해서 이동"
+                      >
+                        <GripVertical size={16} />
+                      </div>
+
+                      {item.image_url ? (
+                        <img
+                          src={item.image_url}
+                          alt={item.name}
+                          className="w-24 h-24 object-cover rounded mb-2"
+                        />
+                      ) : (
+                        <div className="w-24 h-24 bg-gray-200 rounded mb-2" />
+                      )}
+                      <div className="text-sm font-medium">{item.name}</div>
+                      <div className="text-xs text-gray-500">[{item.category}]</div>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="absolute top-2 right-2 text-gray-400 hover:text-red-500"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </div>
+    );
   };
 
   return (
@@ -160,48 +233,10 @@ export default function AdminItems() {
         <Button onClick={handleAdd}>기념품 추가</Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 pt-6">
-        {items.map((item, index) => (
-          <div
-            key={item.id}
-            className="border p-4 rounded relative flex flex-col items-center text-center"
-          >
-            {item.image_url ? (
-              <img
-                src={item.image_url}
-                alt={item.name}
-                className="w-24 h-24 object-cover rounded mb-2"
-              />
-            ) : (
-              <div className="w-24 h-24 bg-gray-200 rounded mb-2" />
-            )}
-            <div className="text-sm font-medium">{item.name}</div>
-            <div className="text-xs text-gray-500">[{item.category}]</div>
-            <div className="flex gap-2 mt-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => moveItem(index, "up")}
-              >
-                ↑
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => moveItem(index, "down")}
-              >
-                ↓
-              </Button>
-            </div>
-            <button
-              onClick={() => handleDelete(item.id)}
-              className="absolute top-2 right-2 text-gray-400 hover:text-red-500"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
-        ))}
-      </div>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        {renderCategory("A")}
+        {renderCategory("B")}
+      </DragDropContext>
     </div>
   );
 }
