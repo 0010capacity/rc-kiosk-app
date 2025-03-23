@@ -20,16 +20,18 @@ export default function ProductSelector() {
   const [giftItems, setGiftItems] = useState<GiftItem[]>([]);
   const navigate = useNavigate();
 
+  // Supabase로 바꾸는 예시
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "giftItems"), (snapshot) => {
-      const items = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as GiftItem[];
-      setGiftItems(items);
-    });
+    async function fetchGiftItems() {
+      const { data, error } = await supabase.from('giftItems').select('*');
+      if (error) {
+        console.error(error);
+        return;
+      }
+      setGiftItems(data as GiftItem[]);
+    }
 
-    return () => unsubscribe();
+    fetchGiftItems();
   }, []);
 
   const aItems = giftItems.filter((item) => item.group === "A");
