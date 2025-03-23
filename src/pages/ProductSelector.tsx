@@ -12,7 +12,7 @@ interface GiftItem {
   name: string;
   category: "A" | "B";
   image_url?: string;
-  sort_order?: number;
+  allow_multiple?: boolean;
 }
 
 export default function ProductSelector() {
@@ -26,10 +26,11 @@ export default function ProductSelector() {
       const { data, error } = await supabase
         .from("gift_items")
         .select("*")
-        .order("sort_order", { ascending: true }); // 👈 정렬 기준 변경
+        .order("category", { ascending: true })
+        .order("sort_order", { ascending: true });
 
       if (error) {
-        console.error("기념품 불러오기 실패:", error);
+        console.error(error);
         return;
       }
 
@@ -42,15 +43,32 @@ export default function ProductSelector() {
   const aItems = giftItems.filter((item) => item.category === "A");
   const bItems = giftItems.filter((item) => item.category === "B");
 
-  const countA = selectedItems.filter((item) => aItems.some((a) => a.name === item)).length;
-  const countB = selectedItems.filter((item) => bItems.some((b) => b.name === item)).length;
+  const countA = selectedItems.filter((item) =>
+    aItems.some((a) => a.name === item)
+  ).length;
+  const countB = selectedItems.filter((item) =>
+    bItems.some((b) => b.name === item)
+  ).length;
 
-  const isValidSelection = (item: string) => {
-    if (aItems.some((i) => i.name === item)) {
-      return countA < 1 && selectedItems.length < 2;
-    } else if (bItems.some((i) => i.name === item)) {
-      return selectedItems.length < 2;
+  const isValidSelection = (itemName: string) => {
+    const item = giftItems.find((i) => i.name === itemName);
+    if (!item) return false;
+
+    const total = selectedItems.length;
+
+    if (item.category === "A") {
+      if (item.allow_multiple) {
+        const sameCount = selectedItems.filter((n) => n === item.name).length;
+        return sameCount < 2 && total < 2;
+      } else {
+        return countA < 1 && total < 2;
+      }
     }
+
+    if (item.category === "B") {
+      return total < 2;
+    }
+
     return false;
   };
 
@@ -118,10 +136,10 @@ export default function ProductSelector() {
         <img
           src={item.image_url}
           alt={item.name}
-          className="w-16 h-16 object-cover rounded shadow-inner"
+          className="w-16 h-16 object-cover rounded"
         />
       ) : (
-        <div className="w-16 h-16 bg-gray-200 rounded shadow-inner" />
+        <div className="w-16 h-16 bg-gray-200 rounded" />
       )}
       <span className="text-sm text-center">{item.name}</span>
     </Button>
@@ -136,8 +154,33 @@ export default function ProductSelector() {
         </Button>
       </div>
 
+      {/* ✅ 안내 문구 */}
+      <div className="rounded border p-3 bg-blue-50 text-sm text-blue-800 space-y-1">
+        <p className="font-medium">🎯 선택 기준</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>A 품목 1개 + B 품목 1개 선택 가능</li>
+          <li>또는 B 품목 2개 선택 가능</li>
+        </ul>
+        {aItems.some((i) => i.allow_multiple) && (
+          <>
+            <p className="font-medium pt-2">📌 예외 사항</p>
+            <ul className="list-disc pl-5">
+              <li>
+                아래 A 품목은 동일 품목을 2개까지 선택하실 수 있습니다:&nbsp;
+                {aItems
+                  .filter((i) => i.allow_multiple)
+                  .map((i) => `‘${i.name}’`)
+                  .join(", ")}
+              </li>
+            </ul>
+          </>
+        )}
+      </div>
+
       <div className="flex flex-col items-center gap-2">
-        <label htmlFor="username" className="text-gray-700 font-medium">이름을 입력하세요</label>
+        <label htmlFor="username" className="text-gray-700 font-medium">
+          이름을 입력하세요
+        </label>
         <Input
           id="username"
           value={userName}
@@ -149,16 +192,12 @@ export default function ProductSelector() {
 
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">A 품목</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {aItems.map(renderItemCard)}
-        </div>
+        <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
       </div>
 
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">B 품목</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {bItems.map(renderItemCard)}
-        </div>
+        <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
       </div>
 
       <div>
@@ -196,11 +235,7 @@ export default function ProductSelector() {
         <Button onClick={handleReset} variant="secondary" className="w-1/2">
           초기화
         </Button>
-        <Button
-          disabled={!canSubmit}
-          onClick={handleSubmit}
-          className="w-1/2"
-        >
+        <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">
           완료
         </Button>
       </div>
