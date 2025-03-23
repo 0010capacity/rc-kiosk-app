@@ -20,6 +20,7 @@ interface GiftItem {
   category: "A" | "B";
   image_url?: string;
   sort_order?: number;
+  allow_multiple?: boolean;
 }
 
 export default function AdminItems() {
@@ -86,6 +87,7 @@ export default function AdminItems() {
         category,
         image_url: imageUrl,
         sort_order: nextSortOrder,
+        allow_multiple: false,
       },
     ]);
 
@@ -105,6 +107,17 @@ export default function AdminItems() {
       if (!error) {
         setItems((prev) => prev.filter((item) => item.id !== id));
       }
+    }
+  };
+
+  const handleToggleAllowMultiple = async (id: string, current: boolean) => {
+    const { error } = await supabase
+      .from("gift_items")
+      .update({ allow_multiple: !current })
+      .eq("id", id);
+
+    if (!error) {
+      fetchItems();
     }
   };
 
@@ -160,7 +173,7 @@ export default function AdminItems() {
                         snapshot.isDragging ? "scale-105 shadow-lg" : ""
                       }`}
                     >
-                      {/* 👇 잡기 손잡이 */}
+                      {/* 드래그 손잡이 */}
                       <div
                         {...provided.dragHandleProps}
                         className="absolute top-2 left-2 text-gray-400 cursor-grab active:cursor-grabbing"
@@ -178,8 +191,24 @@ export default function AdminItems() {
                       ) : (
                         <div className="w-24 h-24 bg-gray-200 rounded mb-2" />
                       )}
+
                       <div className="text-sm font-medium">{item.name}</div>
                       <div className="text-xs text-gray-500">[{item.category}]</div>
+
+                      {/* ✅ A 품목일 때만 중복 선택 허용 체크박스 */}
+                      {category === "A" && (
+                        <label className="mt-2 flex items-center gap-1 text-xs text-gray-700">
+                          <input
+                            type="checkbox"
+                            checked={item.allow_multiple || false}
+                            onChange={() =>
+                              handleToggleAllowMultiple(item.id, item.allow_multiple ?? false)
+                            }
+                          />
+                          중복 선택 허용
+                        </label>
+                      )}
+
                       <button
                         onClick={() => handleDelete(item.id)}
                         className="absolute top-2 right-2 text-gray-400 hover:text-red-500"
