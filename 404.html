@@ -1,7 +1,15 @@
+<!-- public/404.html 또는 프로젝트 루트에 -->
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="0; url=/" />
+    <meta charset="utf-8" />
+    <title>Page Not Found</title>
+    <script>
+      const redirectPath = location.pathname.replace("/rc-kiosk-app", "");
+      window.location.replace("/rc-kiosk-app/#" + redirectPath + location.search + location.hash);
+    </script>
   </head>
-  <body></body>
+  <body>
+    Redirecting...
+  </body>
 </html>
