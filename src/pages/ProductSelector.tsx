@@ -1,40 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../lib/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, onSnapshot } from "firebase/firestore";
 
-const aItems = [
-  { name: "영화관람권" },
-  { name: "모바일 문화 상품권" },
-];
-
-const bItems = [
-  { name: "편의점 상품권" },
-  { name: "햄버거 상품권" },
-  { name: "커피 상품권" },
-  { name: "온누리 상품권" },
-  { name: "손톱깎이" },
-  { name: "여행용 세트" },
-];
+interface GiftItem {
+  id: string;
+  name: string;
+  group: "A" | "B";
+  image?: string;
+}
 
 export default function ProductSelector() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [userName, setUserName] = useState<string>("");
+  const [giftItems, setGiftItems] = useState<GiftItem[]>([]);
   const navigate = useNavigate();
 
-  const isA = (item: string) => aItems.map(i => i.name).includes(item);
-  const isB = (item: string) => bItems.map(i => i.name).includes(item);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "giftItems"), (snapshot) => {
+      const items = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as GiftItem[];
+      setGiftItems(items);
+    });
 
-  const countA = selectedItems.filter(isA).length;
-  const countB = selectedItems.filter(isB).length;
+    return () => unsubscribe();
+  }, []);
+
+  const aItems = giftItems.filter((item) => item.group === "A");
+  const bItems = giftItems.filter((item) => item.group === "B");
+
+  const countA = selectedItems.filter((item) => aItems.some((a) => a.name === item)).length;
+  const countB = selectedItems.filter((item) => bItems.some((b) => b.name === item)).length;
 
   const isValidSelection = (item: string) => {
-    if (isA(item)) {
+    if (aItems.some((i) => i.name === item)) {
       return countA < 1 && selectedItems.length < 2;
-    } else if (isB(item)) {
+    } else if (bItems.some((i) => i.name === item)) {
       return selectedItems.length < 2;
     }
     return false;
@@ -60,23 +66,21 @@ export default function ProductSelector() {
     setUserName("");
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!canSubmit) return;
 
     const newRecord = {
       name: userName.trim(),
       items: selectedItems,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    // Fire and forget
     addDoc(collection(db, "giftData"), newRecord).catch((err) => {
       console.error("저장 실패:", err);
     });
 
     alert(`${userName}님 선택 완료!`);
     handleReset();
-
   };
 
   const getItemCounts = (items: string[]) => {
@@ -90,7 +94,7 @@ export default function ProductSelector() {
   const itemCounts = getItemCounts(selectedItems);
   const canSubmit = selectedItems.length === 2 && userName.trim() !== "";
 
-  const renderItemCard = (item: { name: string }) => (
+  const renderItemCard = (item: GiftItem) => (
     <Button
       key={item.name}
       onClick={() => handleSelect(item.name)}
