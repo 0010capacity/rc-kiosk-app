@@ -1,8 +1,10 @@
+import { createClient } from "@supabase/supabase-js";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { collection, onSnapshot, deleteDoc, doc } ;
-import { db } ;
 import { Trash2 } from "lucide-react";
 
 interface GiftRecord {
@@ -17,10 +19,6 @@ export default function AdminRecords() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "giftData"), (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
       })) as GiftRecord[];
 
       data.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
@@ -32,7 +30,6 @@ export default function AdminRecords() {
 
   const handleDelete = async (id: string) => {
     if (confirm("정말 삭제하시겠습니까?")) {
-      await deleteDoc(doc(db, "giftData", id));
     }
   };
 
