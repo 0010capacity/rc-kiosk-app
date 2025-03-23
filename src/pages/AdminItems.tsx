@@ -13,6 +13,7 @@ interface GiftItem {
   name: string;
   category: "A" | "B";
   image_url?: string;
+  sort_order?: number;
 }
 
 export default function AdminItems() {
@@ -22,20 +23,20 @@ export default function AdminItems() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
+  const fetchItems = async () => {
+    const { data, error } = await supabase
+      .from("gift_items")
+      .select("*")
+      .order("sort_order", { ascending: true });
+
+    if (error) {
+      console.error("기념품 목록 불러오기 실패:", error);
+    } else {
+      setItems(data as GiftItem[]);
+    }
+  };
+
   useEffect(() => {
-    const fetchItems = async () => {
-      const { data, error } = await supabase
-        .from("gift_items")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("기념품 목록 불러오기 실패:", error);
-      } else {
-        setItems(data as GiftItem[]);
-      }
-    };
-
     fetchItems();
   }, []);
 
@@ -47,12 +48,12 @@ export default function AdminItems() {
     if (imageFile) {
       const fileExt = imageFile.name.split(".").pop();
       const fileName = `${Date.now()}.${fileExt}`;
-      const { data, error } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from("gift-images")
         .upload(fileName, imageFile);
 
-      if (error) {
-        console.error("이미지 업로드 실패:", error);
+      if (uploadError) {
+        console.error("이미지 업로드 실패:", uploadError);
         return;
       }
 
@@ -63,8 +64,21 @@ export default function AdminItems() {
       imageUrl = publicUrl.publicUrl;
     }
 
+    const { data: maxItem } = await supabase
+      .from("gift_items")
+      .select("sort_order")
+      .order("sort_order", { ascending: false })
+      .limit(1);
+
+    const nextSortOrder = (maxItem?.[0]?.sort_order ?? 0) + 1;
+
     const { error } = await supabase.from("gift_items").insert([
-      { name, category, image_url: imageUrl },
+      {
+        name,
+        category,
+        image_url: imageUrl,
+        sort_order: nextSortOrder,
+      },
     ]);
 
     if (error) {
@@ -73,7 +87,7 @@ export default function AdminItems() {
       setName("");
       setCategory("A");
       setImageFile(null);
-      location.reload();
+      fetchItems();
     }
   };
 
@@ -83,6 +97,31 @@ export default function AdminItems() {
       if (!error) {
         setItems((prev) => prev.filter((item) => item.id !== id));
       }
+    }
+  };
+
+  const moveItem = async (index: number, direction: "up" | "down") => {
+    const newItems = [...items];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+
+    if (targetIndex < 0 || targetIndex >= newItems.length) return;
+
+    const currentItem = newItems[index];
+    const targetItem = newItems[targetIndex];
+
+    // sort_order 서로 교환
+    const { error: error1 } = await supabase
+      .from("gift_items")
+      .update({ sort_order: targetItem.sort_order })
+      .eq("id", currentItem.id);
+
+    const { error: error2 } = await supabase
+      .from("gift_items")
+      .update({ sort_order: currentItem.sort_order })
+      .eq("id", targetItem.id);
+
+    if (!error1 && !error2) {
+      fetchItems();
     }
   };
 
@@ -122,7 +161,7 @@ export default function AdminItems() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 pt-6">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <div
             key={item.id}
             className="border p-4 rounded relative flex flex-col items-center text-center"
@@ -138,6 +177,22 @@ export default function AdminItems() {
             )}
             <div className="text-sm font-medium">{item.name}</div>
             <div className="text-xs text-gray-500">[{item.category}]</div>
+            <div className="flex gap-2 mt-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => moveItem(index, "up")}
+              >
+                ↑
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => moveItem(index, "down")}
+              >
+                ↓
+              </Button>
+            </div>
             <button
               onClick={() => handleDelete(item.id)}
               className="absolute top-2 right-2 text-gray-400 hover:text-red-500"
