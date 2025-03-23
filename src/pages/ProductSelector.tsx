@@ -136,7 +136,7 @@ export default function ProductSelector() {
         <img
           src={item.image_url}
           alt={item.name}
-          className="w-16 h-16 object-cover rounded"
+          className="w-16 h-16 object-contain rounded bg-white"
         />
       ) : (
         <div className="w-16 h-16 bg-gray-200 rounded" />
@@ -154,7 +154,7 @@ export default function ProductSelector() {
         </Button>
       </div>
 
-      {/* ✅ 안내 문구 */}
+      {/* ✅ 선택 안내 (개조식 + 예외 명시) */}
       <div className="rounded border p-3 bg-blue-50 text-sm text-blue-800 space-y-1">
         <p className="font-medium">🎯 선택 기준</p>
         <ul className="list-disc pl-5 space-y-1">
@@ -212,11 +212,8 @@ export default function ProductSelector() {
                   key={index}
                   className="flex items-center justify-between gap-3 p-2 border rounded-lg bg-gray-50 shadow-inner"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-200 rounded" />
-                    <div className="text-gray-700 text-sm font-medium">
-                      {item} {count > 1 ? `x${count}` : ""}
-                    </div>
+                  <div className="text-gray-700 text-sm font-medium">
+                    {item} {count > 1 ? `x${count}` : ""}
                   </div>
                   <button
                     onClick={() => handleRemove(item)}
