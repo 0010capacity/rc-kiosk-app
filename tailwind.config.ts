@@ -4,7 +4,13 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
-    extend: {},
+    
+    extend: {
+      colors: {
+        redCross: '#d62828',
+      },
+    },
+    },
   },
   plugins: [],
 };
