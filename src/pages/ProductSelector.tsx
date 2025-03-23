@@ -23,7 +23,7 @@ export default function ProductSelector() {
   // Supabase로 바꾸는 예시
   useEffect(() => {
     async function fetchGiftItems() {
-      const { data, error } = await supabase.from('giftItems').select('*');
+      const { data, error } = await supabase.from('gift_items').select('*');
       if (error) {
         console.error(error);
         return;

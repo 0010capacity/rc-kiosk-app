@@ -25,7 +25,7 @@ export default function AdminItems() {
   useEffect(() => {
     const fetchItems = async () => {
       const { data, error } = await supabase
-        .from("giftItems")
+        .from("gift_items")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -63,7 +63,7 @@ export default function AdminItems() {
       imageUrl = publicUrl.publicUrl;
     }
 
-    const { error } = await supabase.from("giftItems").insert([
+    const { error } = await supabase.from("gift_items").insert([
       { name, group, image_url: imageUrl },
     ]);
 
@@ -79,7 +79,7 @@ export default function AdminItems() {
 
   const handleDelete = async (id: string) => {
     if (confirm("정말 삭제하시겠습니까?")) {
-      const { error } = await supabase.from("giftItems").delete().eq("id", id);
+      const { error } = await supabase.from("gift_items").delete().eq("id", id);
       if (!error) {
         setItems((prev) => prev.filter((item) => item.id !== id));
       }
