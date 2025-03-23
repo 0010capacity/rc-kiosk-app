@@ -3,7 +3,9 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { db } ;
+import { createClient } from "@supabase/supabase-js";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 import { collection, addDoc, onSnapshot } ;
 
 interface GiftItem {
