@@ -57,7 +57,21 @@ export default function AdminPage() {
               >
                 <Trash2 size={16} />
               </button>
-              <p className="font-semibold">{record.name} <span className="text-sm text-gray-400">({record.timestamp ? new Date(record.timestamp.seconds * 1000).toLocaleString("ko-KR", { year: "2-digit", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : ""})</span></p>
+              <p className="font-semibold">
+                {record.name}{" "}
+                <span className="text-sm text-gray-400">
+                  ({record.timestamp
+                    ? new Date(record.timestamp.seconds * 1000).toLocaleString("ko-KR", {
+                        year: "2-digit",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : ""}
+                  )
+                </span>
+              </p>
               <ul className="list-disc list-inside text-sm text-gray-700">
                 {record.items.map((item, i) => (
                   <li key={i}>{item}</li>
