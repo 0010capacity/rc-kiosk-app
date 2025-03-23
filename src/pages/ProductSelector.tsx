@@ -11,7 +11,8 @@ interface GiftItem {
   id: string;
   name: string;
   category: "A" | "B";
-  image?: string;
+  image_url?: string;
+  sort_order?: number;
 }
 
 export default function ProductSelector() {
@@ -20,14 +21,18 @@ export default function ProductSelector() {
   const [giftItems, setGiftItems] = useState<GiftItem[]>([]);
   const navigate = useNavigate();
 
-  // Supabase로 바꾸는 예시
   useEffect(() => {
     async function fetchGiftItems() {
-      const { data, error } = await supabase.from('gift_items').select('*');
+      const { data, error } = await supabase
+        .from("gift_items")
+        .select("*")
+        .order("sort_order", { ascending: true }); // 👈 정렬 기준 변경
+
       if (error) {
-        console.error(error);
+        console.error("기념품 불러오기 실패:", error);
         return;
       }
+
       setGiftItems(data as GiftItem[]);
     }
 
@@ -69,18 +74,22 @@ export default function ProductSelector() {
     setUserName("");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!canSubmit) return;
 
-    const newRecord = {
-      name: userName.trim(),
-      items: selectedItems,
-      timestamp: new Date(),
-    };
+    const { error } = await supabase.from("gift_data").insert([
+      {
+        name: userName.trim(),
+        items: selectedItems,
+        timestamp: new Date().toISOString(),
+      },
+    ]);
 
-    addDoc(collection(db, "giftData"), newRecord).catch((err) => {
-      console.error("저장 실패:", err);
-    });
+    if (error) {
+      console.error("저장 실패:", error);
+      alert("저장에 실패했습니다. 다시 시도해주세요.");
+      return;
+    }
 
     alert(`${userName}님 선택 완료!`);
     handleReset();
@@ -105,7 +114,15 @@ export default function ProductSelector() {
       variant="outline"
       className="flex flex-col items-center space-y-2 p-3 h-32"
     >
-      <div className="w-16 h-16 bg-gray-200 rounded shadow-inner" />
+      {item.image_url ? (
+        <img
+          src={item.image_url}
+          alt={item.name}
+          className="w-16 h-16 object-cover rounded shadow-inner"
+        />
+      ) : (
+        <div className="w-16 h-16 bg-gray-200 rounded shadow-inner" />
+      )}
       <span className="text-sm text-center">{item.name}</span>
     </Button>
   );
