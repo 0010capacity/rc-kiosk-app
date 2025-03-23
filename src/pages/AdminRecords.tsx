@@ -21,7 +21,7 @@ export default function AdminRecords() {
   useEffect(() => {
     const fetchData = async () => {
       const { data, error } = await supabase
-        .from("gift_selections")
+        .from("giftSelections")
         .select("*");
 
       if (error) {
@@ -42,7 +42,7 @@ export default function AdminRecords() {
   const handleDelete = async (id: string) => {
     if (confirm("정말 삭제하시겠습니까?")) {
       const { error } = await supabase
-        .from("gift_selections")
+        .from("giftSelections")
         .delete()
         .eq("id", id);
 
