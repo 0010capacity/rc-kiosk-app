@@ -10,7 +10,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 interface GiftItem {
   id: string;
   name: string;
-  group: "A" | "B";
+  category: "A" | "B";
   image?: string;
 }
 
@@ -34,8 +34,8 @@ export default function ProductSelector() {
     fetchGiftItems();
   }, []);
 
-  const aItems = giftItems.filter((item) => item.group === "A");
-  const bItems = giftItems.filter((item) => item.group === "B");
+  const aItems = giftItems.filter((item) => item.category === "A");
+  const bItems = giftItems.filter((item) => item.category === "B");
 
   const countA = selectedItems.filter((item) => aItems.some((a) => a.name === item)).length;
   const countB = selectedItems.filter((item) => bItems.some((b) => b.name === item)).length;

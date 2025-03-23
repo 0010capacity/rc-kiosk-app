@@ -11,14 +11,14 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 interface GiftItem {
   id: string;
   name: string;
-  group: "A" | "B";
+  category: "A" | "B";
   image_url?: string;
 }
 
 export default function AdminItems() {
   const [items, setItems] = useState<GiftItem[]>([]);
   const [name, setName] = useState("");
-  const [group, setGroup] = useState<"A" | "B">("A");
+  const [category, setCategory] = useState<"A" | "B">("A");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
@@ -64,14 +64,14 @@ export default function AdminItems() {
     }
 
     const { error } = await supabase.from("gift_items").insert([
-      { name, group, image_url: imageUrl },
+      { name, category, image_url: imageUrl },
     ]);
 
     if (error) {
       alert("기념품 추가 실패");
     } else {
       setName("");
-      setGroup("A");
+      setCategory("A");
       setImageFile(null);
       location.reload();
     }
@@ -102,8 +102,8 @@ export default function AdminItems() {
           onChange={(e) => setName(e.target.value)}
         />
         <select
-          value={group}
-          onChange={(e) => setGroup(e.target.value as "A" | "B")}
+          value={category}
+          onChange={(e) => setCategory(e.target.value as "A" | "B")}
           className="border rounded px-3 py-2 w-full"
         >
           <option value="A">A 품목</option>
@@ -137,7 +137,7 @@ export default function AdminItems() {
               <div className="w-24 h-24 bg-gray-200 rounded mb-2" />
             )}
             <div className="text-sm font-medium">{item.name}</div>
-            <div className="text-xs text-gray-500">[{item.group}]</div>
+            <div className="text-xs text-gray-500">[{item.category}]</div>
             <button
               onClick={() => handleDelete(item.id)}
               className="absolute top-2 right-2 text-gray-400 hover:text-red-500"
