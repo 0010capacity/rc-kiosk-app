@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { collection, onSnapshot, deleteDoc, doc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { collection, onSnapshot, deleteDoc, doc } ;
+import { db } ;
 import { Trash2 } from "lucide-react";
 
 interface GiftRecord {

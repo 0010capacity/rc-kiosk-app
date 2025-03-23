@@ -10,14 +10,14 @@ import {
   onSnapshot,
   query,
   orderBy,
-} from "firebase/firestore";
+} ;
 import {
   getStorage,
   ref,
   uploadBytes,
   getDownloadURL,
-} from "firebase/storage";
-import { db } from "@/lib/firebase";
+} ;
+import { db } ;
 import { Trash2 } from "lucide-react";
 
 interface GiftItem {

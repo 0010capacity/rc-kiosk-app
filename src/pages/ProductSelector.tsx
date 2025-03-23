@@ -3,8 +3,8 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../lib/firebase";
-import { collection, addDoc, onSnapshot } from "firebase/firestore";
+import { db } ;
+import { collection, addDoc, onSnapshot } ;
 
 interface GiftItem {
   id: string;
