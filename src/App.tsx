@@ -1,4 +1,3 @@
-// App.tsx 수정 후
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ProductSelector from "@/pages/ProductSelector";
 import AdminPage from "@/pages/AdminPage";
@@ -7,7 +6,7 @@ import AdminItems from "@/pages/AdminItems";
 
 function App() {
   return (
-    <Router>
+    <Router basename="/">
       <Routes>
         <Route path="/" element={<ProductSelector />} />
         <Route path="/admin" element={<AdminPage />} />
