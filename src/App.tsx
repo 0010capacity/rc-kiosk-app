@@ -3,12 +3,12 @@ import ProductSelector from "@/pages/ProductSelector";
 import AdminPage from "@/pages/AdminPage";
 import AdminRecords from "@/pages/AdminRecords";
 import AdminItems from "@/pages/AdminItems";
+import AdminLogin from "@/pages/AdminLogin";
 
 function App() {
   return (
     <Router basename="/">
-      import AdminLogin from "@/pages/AdminLogin";
-
+      
 <Routes>
         <Route path="/" element={<ProductSelector />} />
         <Route path="/admin-login" element={<AdminLogin />} />
