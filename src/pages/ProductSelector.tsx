@@ -40,8 +40,8 @@ export default function ProductSelector() {
     fetchGiftItems();
   }, []);
 
-  const aItems = giftItems.filter((item) => item.category === "A");
-  const bItems = giftItems.filter((item) => item.category === "B");
+  const aItems = giftItems.filter((item) => item.category === "A" && item.visible !== false);
+  const bItems = giftItems.filter((item) => item.category === "B" && item.visible !== false);
 
   const countA = selectedItems.filter((item) =>
     aItems.some((a) => a.name === item)
@@ -148,7 +148,13 @@ export default function ProductSelector() {
       ) : (
         <div className="w-full aspect-[2/1] bg-gray-200 rounded" />
       )}
-      <span className="text-sm text-center">{item.name}</span>
+      <span className="text-sm text-center">{item.name}<span
+  onClick={() => item.description && alert(item.description)}
+  className="ml-1 cursor-pointer text-blue-500 hover:underline"
+  title="기념품 설명 보기"
+>
+  ℹ️
+</span></span>
     </Button>
   );
 
