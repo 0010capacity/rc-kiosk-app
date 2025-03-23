@@ -173,7 +173,6 @@ export default function AdminItems() {
                         snapshot.isDragging ? "scale-105 shadow-lg" : ""
                       }`}
                     >
-                      {/* 드래그 손잡이 */}
                       <div
                         {...provided.dragHandleProps}
                         className="absolute top-2 left-2 text-gray-400 cursor-grab active:cursor-grabbing"
@@ -186,16 +185,15 @@ export default function AdminItems() {
                         <img
                           src={item.image_url}
                           alt={item.name}
-                          className="w-24 h-24 object-cover rounded mb-2"
+                          className="w-full aspect-[2/1] object-contain bg-white rounded mb-2"
                         />
                       ) : (
-                        <div className="w-24 h-24 bg-gray-200 rounded mb-2" />
+                        <div className="w-full aspect-[2/1] bg-gray-200 rounded mb-2" />
                       )}
 
                       <div className="text-sm font-medium">{item.name}</div>
                       <div className="text-xs text-gray-500">[{item.category}]</div>
 
-                      {/* ✅ A 품목일 때만 중복 선택 허용 체크박스 */}
                       {category === "A" && (
                         <label className="mt-2 flex items-center gap-1 text-xs text-gray-700">
                           <input
@@ -231,8 +229,8 @@ export default function AdminItems() {
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold">기념품 목록 관리</h1>
-        <Button onClick={() => navigate("/admin")} variant="ghost">
-          ← 관리자 메뉴
+        <Button onClick={() => navigate("/admin")} variant="secondary">
+          관리자 메뉴
         </Button>
       </div>
 
