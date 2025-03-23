@@ -10,7 +10,6 @@ export default {
         redCross: '#d62828',
       },
     },
-    },
   },
   plugins: [],
 };
