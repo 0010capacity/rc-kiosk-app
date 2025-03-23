@@ -157,8 +157,8 @@ export default function ProductSelector() {
       {/* ✅ 헤더 및 관리자 페이지 이동 */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">기념품 선택</h1>
-        <Button variant="secondary" onClick={() => navigate("/admin")}>
-          관리자 페이지
+        <Button variant="subtle" onClick={() => navigate("/admin")}>
+          관리자 메뉴
         </Button>
       </div>
 

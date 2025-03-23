@@ -58,7 +58,7 @@ export default function AdminRecords() {
         <h1 className="text-2xl font-bold text-gray-800">기념품 선택 기록</h1>
         <Button
           onClick={() => navigate("/admin")}
-          variant="secondary"
+          variant="subtle"
           size="sm"
           className="flex items-center gap-1"
         >
