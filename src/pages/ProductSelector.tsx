@@ -123,13 +123,22 @@ export default function ProductSelector() {
       onMouseEnter={() => setShowTooltipId(item.id)}
       onMouseLeave={() => setShowTooltipId(null)}
     >
-      <div className="w-32 h-16 bg-gray-200 rounded shadow-inner" />
-      <div className="flex items-center gap-1 justify-center">
+      {item.image_url ? (
+        <img
+          src={item.image_url}
+          alt={item.name}
+          className="w-32 h-16 object-contain rounded shadow-inner"
+        />
+      ) : (
+        <div className="w-32 h-16 bg-gray-200 rounded shadow-inner" />
+      )}
+
+      <div className="flex items-center gap-1 justify-center relative w-full">
         <span className="text-sm text-center">{item.name}</span>
         {item.description && (
-          <div className="relative group cursor-help">
+          <div className="group cursor-help relative">
             <span className="text-xs text-gray-400 group-hover:underline">ℹ️</span>
-            {(showTooltipId === item.id) && (
+            {showTooltipId === item.id && (
               <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 w-48 bg-black text-white text-xs rounded px-2 py-1 z-10 pointer-events-none whitespace-pre-line text-center">
                 {item.description}
               </div>
@@ -188,7 +197,9 @@ export default function ProductSelector() {
                   key={index}
                   className="flex items-center justify-between gap-3 p-2 border rounded-lg bg-gray-50 shadow-inner"
                 >
-                  <div className="text-gray-700 text-sm font-medium">{item} {count > 1 ? `x${count}` : ""}</div>
+                  <div className="text-gray-700 text-sm font-medium">
+                    {item} {count > 1 ? `x${count}` : ""}
+                  </div>
                   <button
                     onClick={() => handleRemove(item)}
                     className="text-gray-400 hover:text-red-500"
