@@ -130,16 +130,23 @@ export default function ProductSelector() {
       onClick={() => handleSelect(item.name)}
       disabled={!isValidSelection(item.name)}
       variant="outline"
-      className="flex flex-col items-center space-y-2 p-3 h-32"
+      className="flex flex-col items-center space-y-2 p-3 h-auto relative"
     >
+      {/* ✅ 뱃지 표시 */}
+      {item.allow_multiple && (
+        <span className="absolute top-1 right-1 text-[10px] bg-yellow-300 text-gray-800 px-1.5 py-0.5 rounded font-medium shadow-sm">
+          🔁 중복 선택 가능
+        </span>
+      )}
+
       {item.image_url ? (
         <img
           src={item.image_url}
           alt={item.name}
-          className="w-16 h-16 object-contain rounded bg-white"
+          className="w-full aspect-[2/1] object-contain bg-white rounded"
         />
       ) : (
-        <div className="w-16 h-16 bg-gray-200 rounded" />
+        <div className="w-full aspect-[2/1] bg-gray-200 rounded" />
       )}
       <span className="text-sm text-center">{item.name}</span>
     </Button>
@@ -147,14 +154,15 @@ export default function ProductSelector() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
+      {/* ✅ 헤더 및 관리자 페이지 이동 */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">기념품 선택</h1>
-        <Button variant="ghost" onClick={() => navigate("/admin")}>
+        <Button variant="secondary" onClick={() => navigate("/admin")}>
           관리자 페이지
         </Button>
       </div>
 
-      {/* ✅ 선택 안내 (개조식 + 예외 명시) */}
+      {/* ✅ 선택 안내 (개조식 + 예외 표기) */}
       <div className="rounded border p-3 bg-blue-50 text-sm text-blue-800 space-y-1">
         <p className="font-medium">🎯 선택 기준</p>
         <ul className="list-disc pl-5 space-y-1">
@@ -177,6 +185,7 @@ export default function ProductSelector() {
         )}
       </div>
 
+      {/* ✅ 사용자 이름 입력 */}
       <div className="flex flex-col items-center gap-2">
         <label htmlFor="username" className="text-gray-700 font-medium">
           이름을 입력하세요
@@ -190,6 +199,7 @@ export default function ProductSelector() {
         />
       </div>
 
+      {/* ✅ A / B 품목 선택 */}
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">A 품목</h2>
         <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
@@ -200,6 +210,7 @@ export default function ProductSelector() {
         <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
       </div>
 
+      {/* ✅ 선택된 항목 요약 */}
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">선택된 기념품</h2>
         <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
@@ -228,6 +239,7 @@ export default function ProductSelector() {
         </div>
       </div>
 
+      {/* ✅ 하단 버튼 */}
       <div className="flex justify-between gap-4">
         <Button onClick={handleReset} variant="secondary" className="w-1/2">
           초기화
