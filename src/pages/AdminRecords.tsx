@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Trash2 } from "lucide-react";
-
+import { Trash2, ArrowLeft } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 interface GiftRecord {
@@ -20,10 +20,7 @@ export default function AdminRecords() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data, error } = await supabase
-        .from("gift_records")
-        .select("*");
-
+      const { data, error } = await supabase.from("gift_records").select("*");
       if (error) {
         console.error("데이터 로드 오류:", error);
       } else if (data) {
@@ -55,39 +52,52 @@ export default function AdminRecords() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
+    <div className="max-w-2xl mx-auto p-6 space-y-8">
+      {/* 헤더 */}
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">기념품 선택 기록</h1>
-        <Button onClick={() => navigate("/admin")} variant="ghost">
-          ← 관리자 메뉴
+        <h1 className="text-2xl font-bold text-gray-800">기념품 선택 기록</h1>
+        <Button
+          onClick={() => navigate("/admin")}
+          variant="secondary"
+          size="sm"
+          className="flex items-center gap-1"
+        >
+          <ArrowLeft size={16} />
+          관리자 메뉴
         </Button>
       </div>
 
+      {/* 본문 */}
       {records.length === 0 ? (
-        <p className="text-gray-500">선택된 기록이 없습니다.</p>
+        <p className="text-gray-500 text-center">선택된 기록이 없습니다.</p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {records.map((record) => (
-            <div key={record.id} className="border p-4 rounded-md shadow-sm relative">
+            <div
+              key={record.id}
+              className="relative border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition"
+            >
               <button
                 onClick={() => handleDelete(record.id)}
-                className="absolute top-2 right-2 text-gray-400 hover:text-red-500"
+                className="absolute top-3 right-3 text-gray-400 hover:text-red-500"
               >
                 <Trash2 size={16} />
               </button>
-              <p className="font-semibold">
-                {record.name}
-                <span className="text-sm text-gray-400 ml-2">
-                  ({new Date(record.timestamp || "").toLocaleString("ko-KR", {
+
+              <div className="mb-1 flex flex-wrap items-center gap-2">
+                <span className="font-semibold text-gray-800">{record.name}</span>
+                <span className="text-xs text-gray-500">
+                  {new Date(record.timestamp || "").toLocaleString("ko-KR", {
                     year: "2-digit",
                     month: "2-digit",
                     day: "2-digit",
                     hour: "2-digit",
                     minute: "2-digit",
-                  })})
+                  })}
                 </span>
-              </p>
-              <ul className="list-disc list-inside text-sm text-gray-700">
+              </div>
+
+              <ul className="list-disc list-inside text-sm text-gray-700 mt-1">
                 {record.items.map((item, i) => (
                   <li key={i}>{item}</li>
                 ))}
