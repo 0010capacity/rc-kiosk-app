@@ -63,19 +63,20 @@ export default function ProductSelector() {
   const handleSubmit = async () => {
     if (!canSubmit) return;
 
-    try {
-      await addDoc(collection(db, "giftData"), {
-        name: userName.trim(),
-        items: selectedItems,
-        timestamp: new Date()
-      });
+    const newRecord = {
+      name: userName.trim(),
+      items: selectedItems,
+      timestamp: new Date()
+    };
 
-      alert(`${userName}님 선택 완료!`);
-      handleReset();
-    } catch (error) {
-      console.error("Firestore 저장 오류:", error);
-      alert("데이터 저장 중 오류가 발생했습니다.");
-    }
+    // Fire and forget
+    addDoc(collection(db, "giftData"), newRecord).catch((err) => {
+      console.error("저장 실패:", err);
+    });
+
+    alert(`${userName}님 선택 완료!`);
+    handleReset();
+
   };
 
   const getItemCounts = (items: string[]) => {
