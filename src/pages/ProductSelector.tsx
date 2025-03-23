@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-import { collection, addDoc, onSnapshot } ;
 
 interface GiftItem {
   id: string;
