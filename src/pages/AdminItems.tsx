@@ -1,17 +1,13 @@
+
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Upload, GripVertical } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Trash2, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from "react-beautiful-dnd";
-
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 interface GiftItem {
@@ -21,6 +17,8 @@ interface GiftItem {
   image_url?: string;
   sort_order?: number;
   allow_multiple?: boolean;
+  visible?: boolean;
+  description?: string;
 }
 
 export default function AdminItems() {
@@ -28,6 +26,7 @@ export default function AdminItems() {
   const [name, setName] = useState("");
   const [category, setCategory] = useState<"A" | "B">("A");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [description, setDescription] = useState("");
   const navigate = useNavigate();
 
   const fetchItems = async () => {
@@ -37,9 +36,7 @@ export default function AdminItems() {
       .order("category", { ascending: true })
       .order("sort_order", { ascending: true });
 
-    if (error) {
-      console.error("기념품 목록 불러오기 실패:", error);
-    } else {
+    if (!error && data) {
       setItems(data as GiftItem[]);
     }
   };
@@ -54,22 +51,18 @@ export default function AdminItems() {
     let imageUrl = "";
 
     if (imageFile) {
-      const fileExt = imageFile.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
+      const ext = imageFile.name.split(".").pop();
+      const fileName = `${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from("gift-images")
         .upload(fileName, imageFile);
 
-      if (uploadError) {
-        console.error("이미지 업로드 실패:", uploadError);
-        return;
+      if (!uploadError) {
+        const { data: publicUrl } = supabase.storage
+          .from("gift-images")
+          .getPublicUrl(fileName);
+        imageUrl = publicUrl?.publicUrl || "";
       }
-
-      const { data: publicUrl } = supabase.storage
-        .from("gift-images")
-        .getPublicUrl(fileName);
-
-      imageUrl = publicUrl.publicUrl;
     }
 
     const { data: maxItem } = await supabase
@@ -87,14 +80,15 @@ export default function AdminItems() {
         category,
         image_url: imageUrl,
         sort_order: nextSortOrder,
+        description,
+        visible: true,
         allow_multiple: false,
       },
     ]);
 
-    if (error) {
-      alert("기념품 추가 실패");
-    } else {
+    if (!error) {
       setName("");
+      setDescription("");
       setCategory("A");
       setImageFile(null);
       fetchItems();
@@ -105,140 +99,41 @@ export default function AdminItems() {
     if (confirm("정말 삭제하시겠습니까?")) {
       const { error } = await supabase.from("gift_items").delete().eq("id", id);
       if (!error) {
-        setItems((prev) => prev.filter((item) => item.id !== id));
+        fetchItems();
       }
     }
   };
 
-  const handleToggleAllowMultiple = async (id: string, current: boolean) => {
+  const handleUpdate = async (item: GiftItem, field: keyof GiftItem, value: any) => {
     const { error } = await supabase
       .from("gift_items")
-      .update({ allow_multiple: !current })
-      .eq("id", id);
+      .update({ [field]: value })
+      .eq("id", item.id);
 
     if (!error) {
       fetchItems();
     }
   };
 
-  const handleDragEnd = async (result: DropResult) => {
-    const { source, destination, type } = result;
-    if (!destination || source.index === destination.index) return;
-
-    const category = type as "A" | "B";
-    const categoryItems = items
-      .filter((item) => item.category === category)
-      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-
-    const reordered = [...categoryItems];
-    const [moved] = reordered.splice(source.index, 1);
-    reordered.splice(destination.index, 0, moved);
-
-    const updates = reordered.map((item, index) => ({
-      id: item.id,
-      sort_order: index + 1,
-    }));
-
-    await Promise.all(
-      updates.map((u) =>
-        supabase.from("gift_items").update({ sort_order: u.sort_order }).eq("id", u.id)
-      )
-    );
-
-    fetchItems();
-  };
-
-  const renderCategory = (category: "A" | "B") => {
-    const filtered = items
-      .filter((item) => item.category === category)
-      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-
-    return (
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-2">{category} 품목</h2>
-        <Droppable droppableId={category} type={category}>
-          {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className="grid grid-cols-2 gap-4"
-            >
-              {filtered.map((item, index) => (
-                <Draggable draggableId={item.id} index={index} key={item.id}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      className={`border p-4 rounded relative flex flex-col items-center text-center transition-transform duration-200 ease-in-out ${
-                        snapshot.isDragging ? "scale-105 shadow-lg" : ""
-                      }`}
-                    >
-                      <div
-                        {...provided.dragHandleProps}
-                        className="absolute top-2 left-2 text-gray-400 cursor-grab active:cursor-grabbing"
-                        title="드래그해서 이동"
-                      >
-                        <GripVertical size={16} />
-                      </div>
-
-                      {item.image_url ? (
-                        <img
-                          src={item.image_url}
-                          alt={item.name}
-                          className="w-full aspect-[2/1] object-contain bg-white rounded mb-2"
-                        />
-                      ) : (
-                        <div className="w-full aspect-[2/1] bg-gray-200 rounded mb-2" />
-                      )}
-
-                      <div className="text-sm font-medium">{item.name}</div>
-                      <div className="text-xs text-gray-500">[{item.category}]</div>
-
-                      {category === "A" && (
-                        <label className="mt-2 flex items-center gap-1 text-xs text-gray-700">
-                          <input
-                            type="checkbox"
-                            checked={item.allow_multiple || false}
-                            onChange={() =>
-                              handleToggleAllowMultiple(item.id, item.allow_multiple ?? false)
-                            }
-                          />
-                          중복 선택 허용
-                        </label>
-                      )}
-
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="absolute top-2 right-2 text-gray-400 hover:text-red-500"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </div>
-    );
-  };
-
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
+    <div className="max-w-3xl mx-auto p-6 space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">기념품 목록 관리</h1>
+        <h1 className="text-2xl font-bold text-gray-800">기념품 목록 관리</h1>
         <Button onClick={() => navigate("/admin")} variant="subtle">
           관리자 메뉴
         </Button>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 border-b pb-6">
         <Input
           placeholder="기념품 이름"
           value={name}
           onChange={(e) => setName(e.target.value)}
+        />
+        <Textarea
+          placeholder="기념품 설명"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
         <select
           value={category}
@@ -260,12 +155,57 @@ export default function AdminItems() {
         <Button onClick={handleAdd} className="px-6 py-2">기념품 추가</Button>
       </div>
 
-      <hr className="my-6 border-t border-gray-300" />
-
-<DragDropContext onDragEnd={handleDragEnd}>
-        {renderCategory("A")}
-        {renderCategory("B")}
-      </DragDropContext>
+      <div className="space-y-6">
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="border p-4 rounded-lg bg-white shadow-sm space-y-2"
+          >
+            <div className="flex justify-between items-center">
+              <Input
+                className="text-lg font-semibold"
+                value={item.name}
+                onChange={(e) => handleUpdate(item, "name", e.target.value)}
+              />
+              <button
+                onClick={() => handleDelete(item.id)}
+                className="text-gray-400 hover:text-red-500"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+            <Textarea
+              value={item.description || ""}
+              onChange={(e) => handleUpdate(item, "description", e.target.value)}
+              placeholder="설명 입력"
+            />
+            <div className="flex items-center gap-4 text-sm">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={item.visible ?? true}
+                  onChange={() =>
+                    handleUpdate(item, "visible", !(item.visible ?? true))
+                  }
+                />
+                &nbsp; 사용자에게 보임
+              </label>
+              {item.category === "A" && (
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={item.allow_multiple ?? false}
+                    onChange={() =>
+                      handleUpdate(item, "allow_multiple", !(item.allow_multiple ?? false))
+                    }
+                  />
+                  &nbsp; 중복 선택 허용
+                </label>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
