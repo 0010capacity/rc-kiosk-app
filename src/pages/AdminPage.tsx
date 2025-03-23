@@ -4,11 +4,31 @@ import { ArrowLeft, ClipboardList, PackageOpen } from "lucide-react";
 
 export default function AdminPage() {
   const navigate = useNavigate();
+import { useEffect } from "react";
+
+useEffect(() => {
+  const isAdmin = sessionStorage.getItem("isAdmin");
+  if (isAdmin !== "true") {
+    navigate("/admin-login");
+  }
+}, []);
+
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-800">관리자 페이지</h1>
+<Button
+  onClick={() => {
+    sessionStorage.removeItem("isAdmin");
+    navigate("/admin-login");
+  }}
+  variant="subtle"
+  size="sm"
+>
+  로그아웃
+</Button>
+
         <Button
           onClick={() => navigate("/")}
           variant="subtle"
