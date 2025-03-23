@@ -1,17 +1,17 @@
-import { createClient } from "@supabase/supabase-js";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 
+import { createClient } from "@supabase/supabase-js";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 interface GiftRecord {
   id: string;
   name: string;
   items: string[];
-  timestamp?: { seconds: number; nanoseconds: number };
+  timestamp?: string;
 }
 
 export default function AdminRecords() {
@@ -19,26 +19,47 @@ export default function AdminRecords() {
   const navigate = useNavigate();
 
   useEffect(() => {
-      })) as GiftRecord[];
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from("gift_selections")
+        .select("*");
 
-      data.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-      setRecords(data);
-    });
+      if (error) {
+        console.error("데이터 로드 오류:", error);
+      } else if (data) {
+        const sorted = (data as GiftRecord[]).sort(
+          (a, b) =>
+            new Date(b.timestamp || "").getTime() -
+            new Date(a.timestamp || "").getTime()
+        );
+        setRecords(sorted);
+      }
+    };
 
-    return () => unsubscribe();
+    fetchData();
   }, []);
 
   const handleDelete = async (id: string) => {
     if (confirm("정말 삭제하시겠습니까?")) {
+      const { error } = await supabase
+        .from("gift_selections")
+        .delete()
+        .eq("id", id);
+
+      if (!error) {
+        setRecords((prev) => prev.filter((r) => r.id !== id));
+      } else {
+        alert("삭제 실패");
+      }
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">선택 내역</h1>
-        <Button onClick={() => navigate(-1)} variant="ghost">
-          ← 돌아가기
+        <h1 className="text-xl font-semibold">기념품 선택 기록</h1>
+        <Button onClick={() => navigate("/admin")} variant="ghost">
+          ← 관리자 메뉴
         </Button>
       </div>
 
@@ -55,18 +76,15 @@ export default function AdminRecords() {
                 <Trash2 size={16} />
               </button>
               <p className="font-semibold">
-                {record.name}{" "}
-                <span className="text-sm text-gray-400">
-                  ({record.timestamp
-                    ? new Date(record.timestamp.seconds * 1000).toLocaleString("ko-KR", {
-                        year: "2-digit",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
-                    : ""}
-                  )
+                {record.name}
+                <span className="text-sm text-gray-400 ml-2">
+                  ({new Date(record.timestamp || "").toLocaleString("ko-KR", {
+                    year: "2-digit",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })})
                 </span>
               </p>
               <ul className="list-disc list-inside text-sm text-gray-700">
