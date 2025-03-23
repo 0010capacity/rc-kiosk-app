@@ -95,7 +95,7 @@ export default function ProductSelector() {
   const handleSubmit = async () => {
     if (!canSubmit) return;
 
-    const { error } = await supabase.from("gift_data").insert([
+    const { error } = await supabase.from("gift_records").insert([
       {
         name: userName.trim(),
         items: selectedItems,
