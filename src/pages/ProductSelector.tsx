@@ -53,24 +53,41 @@ export default function ProductSelector() {
   const isValidSelection = (itemName: string) => {
     const item = giftItems.find((i) => i.name === itemName);
     if (!item) return false;
-
+  
     const total = selectedItems.length;
-
+    if (total >= 2) return false;
+  
     if (item.category === "A") {
-      if (item.allow_multiple) {
-        const sameCount = selectedItems.filter((n) => n === item.name).length;
-        return sameCount < 2 && total < 2;
-      } else {
-        return countA < 1 && total < 2;
+      const selectedAItems = selectedItems.filter((i) =>
+        aItems.some((a) => a.name === i)
+      );
+  
+      const distinctSelectedA = [...new Set(selectedAItems)];
+      const countOfThisItem = selectedItems.filter((i) => i === item.name).length;
+  
+      // 하나의 A 항목만 선택 중이고, 중복 허용일 경우
+      if (
+        (distinctSelectedA.length === 0 || (distinctSelectedA.length === 1 && distinctSelectedA[0] === item.name))
+      ) {
+        if (item.allow_multiple) {
+          return countOfThisItem < 2;
+        } else {
+          return countOfThisItem < 1;
+        }
       }
+  
+      // 이미 다른 A 항목이 선택되어 있다면 불가
+      return false;
     }
-
+  
+    // B 품목은 최대 2개까지
     if (item.category === "B") {
       return total < 2;
     }
-
+  
     return false;
   };
+  
 
   const handleSelect = (item: string) => {
     if (isValidSelection(item)) {
