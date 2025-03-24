@@ -149,9 +149,9 @@ export default function ProductSelector() {
   
         {/* 🏷 중복 선택 뱃지 */}
         {item.allow_multiple && (
-          <div className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-semibold px-2 py-[2px] rounded-full shadow">
-            중복 가능
-          </div>
+          <span className="absolute top-1 right-1 text-[10px] bg-yellow-300 text-gray-800 px-1.5 py-0.5 rounded font-medium shadow-sm">
+            🔁 중복 선택 가능
+          </span>
         )}
   
         {/* 툴팁 */}
