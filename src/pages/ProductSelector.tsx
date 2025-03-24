@@ -15,9 +15,8 @@ interface GiftItem {
   image_url?: string;
   description?: string;
   allow_multiple?: boolean;
+  visible?: boolean;
 }
-
-// 생략: import 및 Supabase 설정은 기존과 동일
 
 export default function ProductSelector() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -51,17 +50,26 @@ export default function ProductSelector() {
     bItems.some((b) => b.name === item)
   ).length;
 
-  const isValidSelection = (item: string) => {
-    const match = giftItems.find((i) => i.name === item);
-    if (!match) return false;
+  const isValidSelection = (itemName: string) => {
+    const item = giftItems.find((i) => i.name === itemName);
+    if (!item) return false;
 
-    if (match.category === "A") {
-      const count = selectedItems.filter((i) => i === item).length;
-      const max = match.allow_multiple ? 2 : 1;
-      return count < max && selectedItems.length < 2;
-    } else {
-      return selectedItems.length < 2;
+    const total = selectedItems.length;
+
+    if (item.category === "A") {
+      if (item.allow_multiple) {
+        const sameCount = selectedItems.filter((n) => n === item.name).length;
+        return sameCount < 2 && total < 2;
+      } else {
+        return countA < 1 && total < 2;
+      }
     }
+
+    if (item.category === "B") {
+      return total < 2;
+    }
+
+    return false;
   };
 
   const handleSelect = (item: string) => {
@@ -168,6 +176,29 @@ export default function ProductSelector() {
         </Button>
       </div>
 
+      {/* ✅ 선택 규칙 안내 영역 */}
+      <div className="rounded border p-3 bg-blue-50 text-sm text-blue-800 space-y-1">
+        <p className="font-medium">🎯 선택 기준</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>A 품목 1개 + B 품목 1개 선택 가능</li>
+          <li>또는 B 품목 2개 선택 가능</li>
+        </ul>
+        {aItems.some((i) => i.allow_multiple) && (
+          <>
+            <p className="font-medium pt-2">📌 예외 사항</p>
+            <ul className="list-disc pl-5">
+              <li>
+                아래 A 품목은 동일 품목을 2개까지 선택하실 수 있습니다:&nbsp;
+                {aItems
+                  .filter((i) => i.allow_multiple)
+                  .map((i) => `‘${i.name}’`)
+                  .join(", ")}
+              </li>
+            </ul>
+          </>
+        )}
+      </div>
+
       <div className="flex flex-col items-center gap-2">
         <label htmlFor="username" className="text-gray-700 font-medium">
           이름을 입력하세요
@@ -183,16 +214,12 @@ export default function ProductSelector() {
 
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">A 품목</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {aItems.map(renderItemCard)}
-        </div>
+        <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
       </div>
 
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">B 품목</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {bItems.map(renderItemCard)}
-        </div>
+        <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
       </div>
 
       <div>
