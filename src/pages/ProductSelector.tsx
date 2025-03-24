@@ -136,6 +136,7 @@ export default function ProductSelector() {
         onTouchStart={() => setShowTooltipId(item.id)}
         onMouseEnter={() => setShowTooltipId(item.id)}
       >
+        {/* 이미지 */}
         {item.image_url ? (
           <img
             src={item.image_url}
@@ -145,13 +146,22 @@ export default function ProductSelector() {
         ) : (
           <div className="w-full h-full bg-gray-200 rounded shadow-inner" />
         )}
+  
+        {/* 🏷 중복 선택 뱃지 */}
+        {item.allow_multiple && (
+          <div className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-semibold px-2 py-[2px] rounded-full shadow">
+            중복 가능
+          </div>
+        )}
+  
+        {/* 툴팁 */}
         {item.description && showTooltipId === item.id && (
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-1 w-48 bg-black text-white text-xs rounded px-2 py-1 z-10 pointer-events-none text-center">
             {item.description}
           </div>
         )}
       </div>
-
+  
       <div className="flex items-center gap-1 justify-center mt-2">
         <span className="text-sm text-center">{item.name}</span>
         {item.description && (
@@ -166,6 +176,7 @@ export default function ProductSelector() {
       </div>
     </Button>
   );
+  
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
