@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ClipboardList, PackageOpen, Gift, LogIn, LogOut } from "lucide-react";
+import { ArrowLeft, ClipboardList, PackageOpen, Gift, LogIn, LogOut, Menu } from "lucide-react";
 import ProductSelector from "./ProductSelector";
 import AdminRecords from "./AdminRecords";
 import AdminItems from "./AdminItems";
