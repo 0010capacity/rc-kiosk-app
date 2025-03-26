@@ -53,7 +53,7 @@ export default function MainLayout() {
       case "items":
         return <AdminItems />;
       case "login":
-        return <AdminLogin />;
+        return <AdminLogin onBack={() => setActiveTab("selector")} />;
       default:
         return <ProductSelector />;
     }
