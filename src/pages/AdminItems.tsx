@@ -196,36 +196,7 @@ export default function AdminItems() {
                           )}
                         </div>
                         <div className="flex justify-between pt-2">
-                          <Button
-                            onClick={() => handleSave(item.id)}
-                            disabled={!editedItems[item.id]}
-                          >
-                            저장
-                          </Button>
-                          <Button variant="destructive" onClick={() => handleDelete(item.id)}>
-                            삭제
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </Draggable>
-              );
-            })}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    );
-  };
-
-  return (
-    <div className="max-w-3xl mx-auto p-6 space-y-8">
-      <div className="flex justify-between items-center">
-        
-        <Button onClick={() => navigate("/admin")} variant="subtle">
-          관리자 메뉴
-        </Button>
+                          
       </div>
 
       {/* ➕ 새 기념품 추가 */}
@@ -299,6 +270,5 @@ export default function AdminItems() {
           </div>
         </div>
       </DragDropContext>
-    </div>
   );
 }
