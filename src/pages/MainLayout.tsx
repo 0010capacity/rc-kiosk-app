@@ -42,7 +42,7 @@ export default function MainLayout() {
       {/* Sidebar */}
       <div
         className={
-          "fixed top-0 left-0 h-full bg-white shadow-lg z-30 transform transition-transform duration-300 " +
+          "fixed top-0 left-0 h-full bg-white shadow-lg z-40 transform transition-transform duration-300 " +
           (sidebarOpen ? "translate-x-0" : "-translate-x-full") +
           " w-64 p-4"
         }
@@ -115,9 +115,9 @@ export default function MainLayout() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 ml-0 p-6 w-full pt-6 md:pt-10 pl-6 md:pl-16">
+      <div className="flex-1 ml-0 p-6 w-full pt-6 md:pt-10 pl-6">
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2 z-50 z-50">
+          <div className="flex items-center gap-2 z-50">
             <Button
               variant="ghost"
               size="icon"

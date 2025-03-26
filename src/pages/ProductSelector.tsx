@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -23,6 +22,7 @@ export default function ProductSelector() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [userName, setUserName] = useState<string>("");
   const [giftItems, setGiftItems] = useState<GiftItem[]>([]);
+  const [showTooltipId, setShowTooltipId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,12 +43,65 @@ export default function ProductSelector() {
   const aItems = giftItems.filter((item) => item.category === "A");
   const bItems = giftItems.filter((item) => item.category === "B");
 
+  const countA = selectedItems.filter((item) =>
+    aItems.some((a) => a.name === item)
+  ).length;
+  const countB = selectedItems.filter((item) =>
+    bItems.some((b) => b.name === item)
+  ).length;
+
+  const isValidSelection = (itemName: string) => {
+    const item = giftItems.find((i) => i.name === itemName);
+    if (!item) return false;
+  
+    const total = selectedItems.length;
+    if (total >= 2) return false;
+  
+    if (item.category === "A") {
+      const selectedAItems = selectedItems.filter((i) =>
+        aItems.some((a) => a.name === i)
+      );
+  
+      const distinctSelectedA = [...new Set(selectedAItems)];
+      const countOfThisItem = selectedItems.filter((i) => i === item.name).length;
+  
+      // 하나의 A 항목만 선택 중이고, 중복 허용일 경우
+      if (
+        (distinctSelectedA.length === 0 || (distinctSelectedA.length === 1 && distinctSelectedA[0] === item.name))
+      ) {
+        if (item.allow_multiple) {
+          return countOfThisItem < 2;
+        } else {
+          return countOfThisItem < 1;
+        }
+      }
+  
+      // 이미 다른 A 항목이 선택되어 있다면 불가
+      return false;
+    }
+  
+    // B 품목은 최대 2개까지
+    if (item.category === "B") {
+      return total < 2;
+    }
+  
+    return false;
+  };
+  
+
   const handleSelect = (item: string) => {
-    setSelectedItems([...selectedItems, item]);
+    if (isValidSelection(item)) {
+      setSelectedItems([...selectedItems, item]);
+    }
   };
 
   const handleRemove = (item: string) => {
-    setSelectedItems(selectedItems.filter(i => i !== item));
+    const index = selectedItems.indexOf(item);
+    if (index !== -1) {
+      const updated = [...selectedItems];
+      updated.splice(index, 1);
+      setSelectedItems(updated);
+    }
   };
 
   const handleReset = () => {
@@ -75,16 +128,83 @@ export default function ProductSelector() {
     }
   };
 
-  const itemCounts = selectedItems.reduce((acc: any, item) => {
-    acc[item] = (acc[item] || 0) + 1;
-    return acc;
-  }, {});
+  const getItemCounts = (items: string[]) => {
+    const counts: { [key: string]: number } = {};
+    items.forEach((item) => {
+      counts[item] = (counts[item] || 0) + 1;
+    });
+    return counts;
+  };
 
+  const itemCounts = getItemCounts(selectedItems);
   const canSubmit = selectedItems.length === 2 && userName.trim() !== "";
 
+  const renderItemCard = (item: GiftItem) => (
+    <Button
+      key={item.name}
+      onClick={() => handleSelect(item.name)}
+      disabled={!isValidSelection(item.name)}
+      variant="outline"
+      className="flex flex-col items-center space-y-2 p-3 h-36 relative"
+      onMouseLeave={() => setShowTooltipId(null)}
+    >
+      <div
+        className="relative w-32 h-16"
+        onTouchStart={() => setShowTooltipId(item.id)}
+        onMouseEnter={() => setShowTooltipId(item.id)}
+      >
+        {/* 이미지 */}
+        {item.image_url ? (
+          <img
+            src={item.image_url}
+            alt={item.name}
+            className="w-full h-full object-contain rounded shadow-inner"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 rounded shadow-inner" />
+        )}
+  
+        {/* 🏷 중복 선택 뱃지 */}
+        {item.allow_multiple && (
+          <span className="absolute top-1 right-1 text-[10px] bg-yellow-300 text-gray-800 px-1.5 py-0.5 rounded font-medium shadow-sm">
+            🔁 중복 선택 가능
+          </span>
+        )}
+  
+        {/* 툴팁 */}
+        {item.description && showTooltipId === item.id && (
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-1 w-48 bg-black text-white text-xs rounded px-2 py-1 z-10 pointer-events-none text-center">
+            {item.description}
+          </div>
+        )}
+      </div>
+  
+      <div className="flex items-center gap-1 justify-center mt-2">
+        <span className="text-sm text-center">{item.name}</span>
+        {item.description && (
+          <div
+            className="cursor-help text-xs text-gray-400"
+            onMouseEnter={() => setShowTooltipId(item.id)}
+            onTouchStart={() => setShowTooltipId(item.id)}
+          >
+            ℹ️
+          </div>
+        )}
+      </div>
+    </Button>
+  );
+  
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-2xl mx-auto p-6 space-y-8">
+      <div className="flex items-center justify-between">
+        
+        <Button variant="subtle" onClick={() => navigate("/admin")}>
+          관리자 페이지
+        </Button>
+      </div>
+
+      {/* ✅ 선택 규칙 안내 영역 */}
       <div className="rounded border p-3 bg-blue-50 text-sm text-blue-800 space-y-1">
         <p className="font-medium">🎯 선택 기준</p>
         <ul className="list-disc pl-5 space-y-1">
@@ -96,8 +216,11 @@ export default function ProductSelector() {
             <p className="font-medium pt-2">📌 예외 사항</p>
             <ul className="list-disc pl-5">
               <li>
-                아래 A 품목은 동일 품목을 2개까지 선택 가능:&nbsp;
-                {aItems.filter((i) => i.allow_multiple).map((i) => `‘${i.name}’`).join(", ")}
+                아래 A 품목은 동일 품목을 2개까지 선택하실 수 있습니다:&nbsp;
+                {aItems
+                  .filter((i) => i.allow_multiple)
+                  .map((i) => `‘${i.name}’`)
+                  .join(", ")}
               </li>
             </ul>
           </>
@@ -117,49 +240,51 @@ export default function ProductSelector() {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        {aItems.map((item) => (
-          <div key={item.id} className="border rounded-lg p-3 shadow-sm">
-            <h3 className="text-sm font-medium">{item.name}</h3>
-            <Button onClick={() => handleSelect(item.name)} className="mt-2 w-full">선택</Button>
-          </div>
-        ))}
+      <div>
+        
+        <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        {bItems.map((item) => (
-          <div key={item.id} className="border rounded-lg p-3 shadow-sm">
-            <h3 className="text-sm font-medium">{item.name}</h3>
-            <Button onClick={() => handleSelect(item.name)} className="mt-2 w-full">선택</Button>
-          </div>
-        ))}
+      <div>
+        
+        <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
       </div>
 
-      <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
-        {selectedItems.length === 0 ? (
-          <p className="text-gray-400 text-center">아직 선택된 기념품이 없습니다.</p>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            {Object.entries(itemCounts).map(([item, count], index) => (
-              <div key={index} className="flex items-center justify-between gap-3 p-2 border rounded-lg bg-gray-50 shadow-inner">
-                <div className="text-gray-700 text-sm font-medium">
-                  {item} {count > 1 ? `x${count}` : ""}
+      <div>
+        
+        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
+          {selectedItems.length === 0 ? (
+            <p className="text-gray-400 text-center">아직 선택된 기념품이 없습니다.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {Object.entries(itemCounts).map(([item, count], index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between gap-3 p-2 border rounded-lg bg-gray-50 shadow-inner"
+                >
+                  <div className="text-gray-700 text-sm font-medium">
+                    {item} {count > 1 ? `x${count}` : ""}
+                  </div>
+                  <button
+                    onClick={() => handleRemove(item)}
+                    className="text-gray-400 hover:text-red-500"
+                  >
+                    <X size={16} />
+                  </button>
                 </div>
-                <button onClick={() => handleRemove(item)} className="text-gray-400 hover:text-red-500">
-                  <X size={16} />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-        <div className="flex justify-between gap-4 mt-4">
-          <Button onClick={handleReset} variant="subtle" className="w-1/2">
-            초기화
-          </Button>
-          <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">
-            완료
-          </Button>
+              ))}
+            </div>
+          )}
         </div>
+      </div>
+
+      <div className="flex justify-between gap-4">
+        <Button onClick={handleReset} variant="subtle" className="w-1/2">
+          초기화
+        </Button>
+        <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">
+          완료
+        </Button>
       </div>
     </div>
   );
