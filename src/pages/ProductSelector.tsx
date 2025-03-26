@@ -181,40 +181,44 @@ export default function ProductSelector() {
 
       <div>
         
-  return (
-    <div className="space-y-6">
-      <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
-        {selectedItems.length === 0 ? (
-          <p className="text-gray-400 text-center">아직 선택된 기념품이 없습니다.</p>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            {Object.entries(itemCounts).map(([item, count], index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between gap-3 p-2 border rounded-lg bg-gray-50 shadow-inner"
-              >
-                <div className="text-gray-700 text-sm font-medium">
-                  {item} {count > 1 ? `x${count}` : ""}
-                </div>
-                <button
-                  onClick={() => handleRemove(item)}
-                  className="text-gray-400 hover:text-red-500"
+        <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
+
+      <div>
+        
+        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
+          {selectedItems.length === 0 ? (
+            <p className="text-gray-400 text-center">아직 선택된 기념품이 없습니다.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {Object.entries(itemCounts).map(([item, count], index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between gap-3 p-2 border rounded-lg bg-gray-50 shadow-inner"
                 >
-                  <X size={16} />
-                </button>
-              </div>
-            ))}
+                  <div className="text-gray-700 text-sm font-medium">
+                    {item} {count > 1 ? `x${count}` : ""}
+                  </div>
+                  <button
+                    onClick={() => handleRemove(item)}
+                    className="text-gray-400 hover:text-red-500"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex justify-between gap-4 mt-4">
+            <Button onClick={handleReset} variant="subtle" className="w-1/2">
+              초기화
+            </Button>
+            <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">
+              완료
+            </Button>
           </div>
-        )}
-        <div className="flex justify-between gap-4 mt-4">
-          <Button onClick={handleReset} variant="subtle" className="w-1/2">
-            초기화
-          </Button>
-          <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">
-            완료
-          </Button>
         </div>
       </div>
     </div>
+      </div>
   );
 }
