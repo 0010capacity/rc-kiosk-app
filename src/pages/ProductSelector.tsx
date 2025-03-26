@@ -140,8 +140,6 @@ export default function ProductSelector() {
   const canSubmit = selectedItems.length === 2 && userName.trim() !== "";
 
   const renderItemCard = (item: GiftItem) => (
-    
-      </div>
 
       {/* ✅ 선택 규칙 안내 영역 */}
       <div className="rounded border p-3 bg-blue-50 text-sm text-blue-800 space-y-1">
@@ -164,7 +162,6 @@ export default function ProductSelector() {
             </ul>
           </>
         )}
-      </div>
 
       <div className="flex flex-col items-center gap-2">
         <label htmlFor="username" className="text-gray-700 font-medium">
@@ -177,17 +174,14 @@ export default function ProductSelector() {
           placeholder="이름 입력"
           className="w-full max-w-sm"
         />
-      </div>
 
       <div>
         
         <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
-      </div>
 
       <div>
         
         <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
-      </div>
 
       <div>
         
@@ -203,19 +197,18 @@ export default function ProductSelector() {
                 >
                   <div className="text-gray-700 text-sm font-medium">
                     {item} {count > 1 ? `x${count}` : ""}
-                  </div>
+
                   <button
                     onClick={() => handleRemove(item)}
                     className="text-gray-400 hover:text-red-500"
                   >
                     <X size={16} />
                   </button>
-                </div>
+
               ))}
-            </div>
+
           )}
-        </div>
-      </div>
+
 
       <div className="flex justify-between gap-4">
         <Button onClick={handleReset} variant="subtle" className="w-1/2">
@@ -224,7 +217,7 @@ export default function ProductSelector() {
         <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">
           완료
         </Button>
-      </div>
-    </div>
+
+
   );
 }
