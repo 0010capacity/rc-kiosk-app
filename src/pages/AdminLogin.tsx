@@ -48,7 +48,7 @@ export default function AdminLogin({ onBack }: { onBack: () => void }) {
           onChange={(e) => setPassword(e.target.value)}
         />
         <div className="flex justify-between">
-          <Button onClick={() => onBack())} variant="outline">
+          <Button onClick={() => onBack()} variant="outline">
             돌아가기
           </Button>
           <Button onClick={handleLogin}>
