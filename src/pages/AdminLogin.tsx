@@ -4,12 +4,14 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabaseConfig";
 
 export default function AdminLogin({ onBack }: { onBack: () => void }) {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     const { data, error } = await supabase
-      .from("admin_auth")
+      .from("user_auth")
       .select("password")
+      .eq("username", username)
       .single();
 
     if (error) {
@@ -22,13 +24,19 @@ export default function AdminLogin({ onBack }: { onBack: () => void }) {
       sessionStorage.setItem("isAdmin", "true");
       window.location.reload();
     } else {
-      alert("비밀번호가 틀렸습니다.");
+      alert("아이디 또는 비밀번호가 틀렸습니다.");
     }
   };
 
   return (
     <div className="flex justify-center items-center h-full">
       <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow space-y-4">
+        <Input
+          type="text"
+          placeholder="아이디"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
         <Input
           type="password"
           placeholder="비밀번호"
