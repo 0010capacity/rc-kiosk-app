@@ -269,7 +269,7 @@ export default function AdminItems() {
             {renderCategory("B")}
           </div>
         </div>
-      </DragDropContext>
+        </DragDropContext>
     </div>
   );
 }
