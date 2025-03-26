@@ -33,6 +33,19 @@ export default function MainLayout() {
     setActiveTab("selector");
   };
 
+  const renderTitle = () => {
+    switch (activeTab) {
+      case "records":
+        return "기록 보기";
+      case "items":
+        return "상품 관리";
+      case "login":
+        return "관리자 로그인";
+      default:
+        return "기념품 선택";
+    }
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case "records":
@@ -87,7 +100,7 @@ export default function MainLayout() {
               className="w-full justify-start"
               onClick={() => setActiveTab("selector")}
             >
-              <Gift className="mr-2 h-4 w-4" />상품 등록
+              <Gift className="mr-2 h-4 w-4" />기념품 선택
             </Button>
             {isAdmin && (
               <>
@@ -131,7 +144,10 @@ export default function MainLayout() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto p-4 w-full">{renderContent()}</div>
+      <div className="flex-1 overflow-auto p-4 w-full">
+        <h1 className="text-2xl font-bold text-center mb-6">{renderTitle()}</h1>
+        {renderContent()}
+      </div>
     </div>
   );
 }
