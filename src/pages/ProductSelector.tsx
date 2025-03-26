@@ -235,12 +235,12 @@ export default function ProductSelector() {
       </div>
 
       <div>
-        
+        <h2 className="text-xl font-semibold text-gray-700 mb-3">A 품목</h2>
         <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
       </div>
 
       <div>
-        
+        <h2 className="text-xl font-semibold text-gray-700 mb-3">B 품목</h2>
         <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
       </div>
 

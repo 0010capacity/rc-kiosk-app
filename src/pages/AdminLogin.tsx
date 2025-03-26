@@ -34,6 +34,7 @@ export default function AdminLogin({ onBack }: { onBack: () => void }) {
   return (
     <div className="flex justify-center items-center h-full">
       <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow space-y-4">
+        <h1 className="text-xl font-semibold text-center">로그인</h1>  
         <Input
           type="text"
           placeholder="아이디"
