@@ -140,7 +140,7 @@ export default function ProductSelector() {
   const canSubmit = selectedItems.length === 2 && userName.trim() !== "";
 
   const renderItemCard = (item: GiftItem) => (
-
+  <>
       {/* ✅ 선택 규칙 안내 영역 */}
       <div className="rounded border p-3 bg-blue-50 text-sm text-blue-800 space-y-1">
         <p className="font-medium">🎯 선택 기준</p>
