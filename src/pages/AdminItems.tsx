@@ -221,13 +221,6 @@ export default function AdminItems() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-8">
-      <div className="flex justify-between items-center">
-        
-        <Button onClick={() => navigate("/admin")} variant="subtle">
-          관리자 메뉴
-        </Button>
-      </div>
-
       {/* ➕ 새 기념품 추가 */}
       <div className="border rounded p-4 shadow bg-white space-y-3">
         

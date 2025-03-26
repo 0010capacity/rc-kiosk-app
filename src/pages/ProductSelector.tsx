@@ -197,12 +197,6 @@ export default function ProductSelector() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <div className="flex items-center justify-between">
-        
-        <Button variant="subtle" onClick={() => navigate("/admin")}>
-          관리자 페이지
-        </Button>
-      </div>
 
       {/* ✅ 선택 규칙 안내 영역 */}
       <div className="rounded border p-3 bg-blue-50 text-sm text-blue-800 space-y-1">

@@ -54,18 +54,6 @@ export default function AdminRecords() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
       {/* 헤더 */}
-      <div className="flex justify-between items-center">
-        
-        <Button
-          onClick={() => navigate("/admin")}
-          variant="subtle"
-          size="sm"
-          className="flex items-center gap-1"
-        >
-          <ArrowLeft size={16} />
-          관리자 메뉴
-        </Button>
-      </div>
 
       {/* 본문 */}
       {records.length === 0 ? (
