@@ -57,7 +57,7 @@ export default function MainLayout() {
           e.stopPropagation();
           setSidebarOpen(!sidebarOpen);
         }}
-        className="fixed top-4 left-4 z-50 p-2 bg-white rounded-full shadow-md"
+        className="fixed top-4 left-4 z-0 p-2 bg-white rounded-full shadow-md"
       >
         <Menu />
       </button>
@@ -67,53 +67,58 @@ export default function MainLayout() {
         className={
           "fixed top-0 left-0 h-full bg-white shadow-lg z-40 transform transition-transform duration-300 " +
           (sidebarOpen ? "translate-x-0" : "-translate-x-full") +
-          " w-64 p-4"
+          " w-64 p-4 flex flex-col justify-between"
         }
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold">메뉴</h2>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="text-gray-500 hover:text-black"
-          >
-            &times;
-          </button>
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold">메뉴</h2>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="text-gray-500 hover:text-black"
+            >
+              &times;
+            </button>
+          </div>
+          <div className="space-y-2">
+            <Button
+              variant={activeTab === "selector" ? "default" : "outline"}
+              className="w-full justify-start"
+              onClick={() => setActiveTab("selector")}
+            >
+              <Gift className="mr-2 h-4 w-4" />상품 등록
+            </Button>
+            {isAdmin && (
+              <>
+                <Button
+                  variant={activeTab === "records" ? "default" : "outline"}
+                  className="w-full justify-start"
+                  onClick={() => setActiveTab("records")}
+                >
+                  <ClipboardList className="mr-2 h-4 w-4" />기록 보기
+                </Button>
+                <Button
+                  variant={activeTab === "items" ? "default" : "outline"}
+                  className="w-full justify-start"
+                  onClick={() => setActiveTab("items")}
+                >
+                  <PackageOpen className="mr-2 h-4 w-4" />상품 관리
+                </Button>
+              </>
+            )}
+          </div>
         </div>
-        <div className="space-y-2">
-          <Button
-            variant={activeTab === "selector" ? "default" : "outline"}
-            className="w-full justify-start"
-            onClick={() => setActiveTab("selector")}
-          >
-            <Gift className="mr-2 h-4 w-4" />상품 등록
-          </Button>
-          {isAdmin && (
-            <>
-              <Button
-                variant={activeTab === "records" ? "default" : "outline"}
-                className="w-full justify-start"
-                onClick={() => setActiveTab("records")}
-              >
-                <ClipboardList className="mr-2 h-4 w-4" />기록 보기
-              </Button>
-              <Button
-                variant={activeTab === "items" ? "default" : "outline"}
-                className="w-full justify-start"
-                onClick={() => setActiveTab("items")}
-              >
-                <PackageOpen className="mr-2 h-4 w-4" />상품 관리
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                onClick={handleLogout}
-              >
-                <LogOut className="mr-2 h-4 w-4" />로그아웃
-              </Button>
-            </>
-          )}
-          {!isAdmin && (
+        <div className="pt-4 border-t">
+          {isAdmin ? (
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />로그아웃
+            </Button>
+          ) : (
             <Button
               variant={activeTab === "login" ? "default" : "outline"}
               className="w-full justify-start"
