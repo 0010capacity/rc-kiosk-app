@@ -115,7 +115,7 @@ export default function MainLayout() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 ml-0 p-6 w-full pt-6 md:pt-10 pl-6">
+      <div className="flex-1 ml-0 p-6 w-full pt-6 md:pt-10 pl-6 md:pl-16">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2 z-50">
             <Button

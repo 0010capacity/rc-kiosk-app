@@ -140,68 +140,7 @@ export default function ProductSelector() {
   const canSubmit = selectedItems.length === 2 && userName.trim() !== "";
 
   const renderItemCard = (item: GiftItem) => (
-    <Button
-      key={item.name}
-      onClick={() => handleSelect(item.name)}
-      disabled={!isValidSelection(item.name)}
-      variant="outline"
-      className="flex flex-col items-center space-y-2 p-3 h-36 relative"
-      onMouseLeave={() => setShowTooltipId(null)}
-    >
-      <div
-        className="relative w-32 h-16"
-        onTouchStart={() => setShowTooltipId(item.id)}
-        onMouseEnter={() => setShowTooltipId(item.id)}
-      >
-        {/* 이미지 */}
-        {item.image_url ? (
-          <img
-            src={item.image_url}
-            alt={item.name}
-            className="w-full h-full object-contain rounded shadow-inner"
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-200 rounded shadow-inner" />
-        )}
-  
-        {/* 🏷 중복 선택 뱃지 */}
-        {item.allow_multiple && (
-          <span className="absolute top-1 right-1 text-[10px] bg-yellow-300 text-gray-800 px-1.5 py-0.5 rounded font-medium shadow-sm">
-            🔁 중복 선택 가능
-          </span>
-        )}
-  
-        {/* 툴팁 */}
-        {item.description && showTooltipId === item.id && (
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-1 w-48 bg-black text-white text-xs rounded px-2 py-1 z-10 pointer-events-none text-center">
-            {item.description}
-          </div>
-        )}
-      </div>
-  
-      <div className="flex items-center gap-1 justify-center mt-2">
-        <span className="text-sm text-center">{item.name}</span>
-        {item.description && (
-          <div
-            className="cursor-help text-xs text-gray-400"
-            onMouseEnter={() => setShowTooltipId(item.id)}
-            onTouchStart={() => setShowTooltipId(item.id)}
-          >
-            ℹ️
-          </div>
-        )}
-      </div>
-    </Button>
-  );
-  
-
-  return (
-    <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <div className="flex items-center justify-between">
-        
-        <Button variant="subtle" onClick={() => navigate("/admin")}>
-          관리자 페이지
-        </Button>
+    
       </div>
 
       {/* ✅ 선택 규칙 안내 영역 */}
