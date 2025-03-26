@@ -87,7 +87,7 @@ export default function AdminItems() {
     const [dragged] = moved.splice(source.index, 1);
     moved.splice(destination.index, 0, dragged);
 
-    await Promise.all(
+    const handleSortUpdate = async () => {
       await Promise.all(
         moved.map((item, i) =>
           supabase
@@ -98,7 +98,6 @@ export default function AdminItems() {
       );
       fetchItems();
     };
-
   const handleNewItemAdd = async () => {
     if (!newItem.name || !newItem.category) return;
 
