@@ -40,7 +40,7 @@ export default function MainLayout() {
       case "items":
         return "상품 관리";
       case "login":
-        return "관리자 로그인";
+        return "";
       default:
         return "기념품 선택";
     }
@@ -137,7 +137,7 @@ export default function MainLayout() {
               className="w-full justify-start"
               onClick={() => setActiveTab("login")}
             >
-              <LogIn className="mr-2 h-4 w-4" />관리자 로그인
+              <LogIn className="mr-2 h-4 w-4" />로그인
             </Button>
           )}
         </div>
