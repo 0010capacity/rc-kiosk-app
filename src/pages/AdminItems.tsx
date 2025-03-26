@@ -270,7 +270,6 @@ export default function AdminItems() {
           </div>
         </div>
       </DragDropContext>
-      </div>
     </div>
   );
 }
