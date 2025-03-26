@@ -1,42 +1,35 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-export default function AdminLogin() {
+export default function AdminLogin({ onBack }: { onBack: () => void }) {
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === "redcross") {
-    sessionStorage.setItem("isAdmin", "true");
-      navigate("/admin");
+  const handleLogin = () => {
+    if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
+      sessionStorage.setItem("isAdmin", "true");
+      window.location.reload();
     } else {
-      setError("비밀번호가 올바르지 않습니다.");
+      alert("비밀번호가 틀렸습니다.");
     }
   };
 
   return (
-    <div className="max-w-sm mx-auto mt-24 space-y-6 p-6 border rounded shadow bg-white">
-      <h1 className="text-xl font-semibold text-center">관리자 로그인</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          type="password"
-          placeholder="비밀번호 입력"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        <Button type="submit" className="w-full">
-          로그인
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold text-center">관리자 로그인</h2>
+      <Input
+        type="password"
+        placeholder="비밀번호"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <div className="flex justify-between">
+        <Button onClick={onBack} variant="outline">
+          돌아가기
         </Button>
-        <Button type="button" variant="subtle" onClick={() => navigate("/")} className="w-full mt-2">
-    돌아가기
-  </Button>
-</form>
+        <Button onClick={handleLogin}>로그인</Button>
+      </div>
     </div>
   );
 }

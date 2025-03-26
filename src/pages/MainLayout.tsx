@@ -115,7 +115,7 @@ export default function MainLayout() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 ml-0 md:ml-64 p-6 w-full">
+      <div className="flex-1 ml-0 p-6 w-full">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2">
             <Button
@@ -128,7 +128,14 @@ export default function MainLayout() {
             <h1 className="text-2xl font-bold text-gray-800">RC Kiosk</h1>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">{renderContent()}</div>
+        <div className="bg-white rounded-lg shadow p-4">
+          {activeTab === "selector" && <h2 className="text-2xl font-bold text-center mb-4">기념품 선택</h2>}
+          {activeTab === "records" && <h2 className="text-2xl font-bold text-center mb-4">기록 보기</h2>}
+          {activeTab === "items" && <h2 className="text-2xl font-bold text-center mb-4">품목 관리</h2>}
+          {activeTab === "login" && <h2 className="text-2xl font-bold text-center mb-4">관리자 로그인</h2>}
+          {activeTab === "login" ? <AdminLogin onBack={() => setActiveTab("selector")} /> : renderContent()}
+        </div>
+    
       </div>
     </div>
   );
