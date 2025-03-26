@@ -13,8 +13,7 @@ function App() {
         <Route path="/" element={<ProductSelector />} />
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path="/admin/records" element={<AdminRecords />} />
-        <Route path="/admin/items" element={<AdminItems />} />
+        
       </Routes>
     </Router>
   );
