@@ -1,16 +1,12 @@
 
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
-import ProductSelector from "@/pages/ProductSelector";
-import AdminPage from "@/pages/AdminPage";
-import AdminLogin from "@/pages/AdminLogin";
+import MainLayout from "@/pages/MainLayout";
 
 function App() {
   return (
     <Router basename="/">
       <Routes>
-        <Route path="/" element={<ProductSelector />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/*" element={<MainLayout />} />
       </Routes>
     </Router>
   );
