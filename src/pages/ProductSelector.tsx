@@ -197,27 +197,28 @@ export default function ProductSelector() {
                 >
                   <div className="text-gray-700 text-sm font-medium">
                     {item} {count > 1 ? `x${count}` : ""}
-
+                  </div>
                   <button
                     onClick={() => handleRemove(item)}
                     className="text-gray-400 hover:text-red-500"
                   >
                     <X size={16} />
                   </button>
-
+                </div>
               ))}
-
+            </div>
           )}
-
-
-      <div className="flex justify-between gap-4">
-        <Button onClick={handleReset} variant="subtle" className="w-1/2">
-          초기화
-        </Button>
-        <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">
-          완료
-        </Button>
-
-
-  );
+          <div className="flex justify-between gap-4 mt-4">
+            <Button onClick={handleReset} variant="subtle" className="w-1/2">
+              초기화
+            </Button>
+            <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">
+              완료
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+);
 }
