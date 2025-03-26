@@ -219,6 +219,6 @@ export default function ProductSelector() {
         </div>
       </div>
     </div>
-      </div>
+  </>
   );
 }
