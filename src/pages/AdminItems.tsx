@@ -88,16 +88,16 @@ export default function AdminItems() {
     moved.splice(destination.index, 0, dragged);
 
     await Promise.all(
-      moved.map((item, i) =>
-        supabase
-          .from("gift_items")
-          .update({ sort_order: i + 1 })
-          .eq("id", item.id)
-      )
-      </div>
-  );
-    fetchItems();
-  };
+      await Promise.all(
+        moved.map((item, i) =>
+          supabase
+            .from("gift_items")
+            .update({ sort_order: i + 1 })
+            .eq("id", item.id)
+        )
+      );
+      fetchItems();
+    };
 
   const handleNewItemAdd = async () => {
     if (!newItem.name || !newItem.category) return;
