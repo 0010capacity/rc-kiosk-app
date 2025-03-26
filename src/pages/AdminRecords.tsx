@@ -55,7 +55,7 @@ export default function AdminRecords() {
     <div className="max-w-2xl mx-auto p-6 space-y-8">
       {/* 헤더 */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">기념품 선택 기록</h1>
+        
         <Button
           onClick={() => navigate("/admin")}
           variant="subtle"

@@ -19,7 +19,7 @@ export default function AdminLogin({ onBack }: { onBack: () => void }) {
   return (
     <div className="flex justify-center items-center h-full">
       <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow space-y-4">
-        <h2 className="text-2xl font-bold text-center">관리자 로그인</h2>
+        
         <Input
           type="password"
           placeholder="비밀번호"

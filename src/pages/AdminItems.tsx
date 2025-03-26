@@ -222,7 +222,7 @@ export default function AdminItems() {
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-bold text-gray-800">기념품 목록 관리</h1>
+        
         <Button onClick={() => navigate("/admin")} variant="subtle">
           관리자 메뉴
         </Button>
@@ -230,7 +230,7 @@ export default function AdminItems() {
 
       {/* ➕ 새 기념품 추가 */}
       <div className="border rounded p-4 shadow bg-white space-y-3">
-        <h2 className="font-semibold text-lg">새 기념품 추가</h2>
+        
         <Input
           placeholder="기념품 이름"
           value={newItem.name ?? ""}
@@ -290,11 +290,11 @@ export default function AdminItems() {
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="space-y-8">
           <div>
-            <h2 className="text-lg font-semibold mb-2">A 품목</h2>
+            
             {renderCategory("A")}
           </div>
           <div>
-            <h2 className="text-lg font-semibold mb-2">B 품목</h2>
+            
             {renderCategory("B")}
           </div>
         </div>

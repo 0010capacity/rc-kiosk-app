@@ -115,7 +115,7 @@ export default function MainLayout() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 ml-0 p-6 w-full">
+      <div className="flex-1 ml-0 p-6 w-full pt-6 md:pt-10 pl-6">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2 z-50">
             <Button
@@ -125,7 +125,7 @@ export default function MainLayout() {
             >
               <Menu />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-800">대한적십자사</h1>
+            
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">

@@ -198,7 +198,7 @@ export default function ProductSelector() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-800">기념품 선택</h1>
+        
         <Button variant="subtle" onClick={() => navigate("/admin")}>
           관리자 페이지
         </Button>
@@ -241,17 +241,17 @@ export default function ProductSelector() {
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold text-gray-700 mb-3">A 품목</h2>
+        
         <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold text-gray-700 mb-3">B 품목</h2>
+        
         <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold text-gray-700 mb-3">선택된 기념품</h2>
+        
         <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
           {selectedItems.length === 0 ? (
             <p className="text-gray-400 text-center">아직 선택된 기념품이 없습니다.</p>
