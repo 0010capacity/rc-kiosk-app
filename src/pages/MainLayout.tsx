@@ -38,7 +38,7 @@ export default function MainLayout() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen relative" onClick={() => sidebarOpen && setSidebarOpen(false)}>
       {/* Sidebar */}
       <div
         className={
@@ -47,7 +47,7 @@ export default function MainLayout() {
           " w-64 p-4"
         }
       >
-        <h2 className="text-lg font-bold mb-4">메뉴</h2>
+        <div className="flex justify-between items-center mb-4"><h2 className="text-lg font-bold">메뉴</h2><button onClick={() => setSidebarOpen(false)} className="text-gray-500 hover:text-black">&times;</button></div>
         <div className="space-y-2">
           <Button
             variant={activeTab === "selector" ? "default" : "outline"}
@@ -117,7 +117,7 @@ export default function MainLayout() {
       {/* Main Content */}
       <div className="flex-1 ml-0 p-6 w-full">
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 z-50">
             <Button
               variant="ghost"
               size="icon"
@@ -125,7 +125,7 @@ export default function MainLayout() {
             >
               <Menu />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-800">RC Kiosk</h1>
+            <h1 className="text-2xl font-bold text-gray-800">대한적십자사</h1>
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
