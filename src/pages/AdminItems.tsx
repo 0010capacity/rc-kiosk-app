@@ -1,9 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Trash2, GripVertical } from "lucide-react";
+import { Trash2, GripVertical, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import {
@@ -30,6 +29,12 @@ interface GiftItem {
 export default function AdminItems() {
   const [items, setItems] = useState<GiftItem[]>([]);
   const [editedItems, setEditedItems] = useState<{ [id: string]: Partial<GiftItem> }>({});
+  const [newItem, setNewItem] = useState<Partial<GiftItem>>({
+    category: "A",
+    visible: true,
+    allow_multiple: false,
+  });
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
   const fetchItems = async () => {
@@ -93,6 +98,40 @@ export default function AdminItems() {
     fetchItems();
   };
 
+  const handleNewItemAdd = async () => {
+    if (!newItem.name || !newItem.category) return;
+
+    let image_url = "";
+
+    if (imageFile) {
+      const ext = imageFile.name.split(".").pop();
+      const filename = `${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("gift-images").upload(filename, imageFile);
+      if (error) {
+        console.error("이미지 업로드 실패:", error);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage.from("gift-images").getPublicUrl(filename);
+      image_url = urlData?.publicUrl ?? "";
+    }
+
+    const categoryItems = items.filter(i => i.category === newItem.category);
+    const nextOrder = (categoryItems.at(-1)?.sort_order ?? 0) + 1;
+
+    await supabase.from("gift_items").insert([
+      {
+        ...newItem,
+        image_url,
+        sort_order: nextOrder,
+      }
+    ]);
+
+    setNewItem({ category: "A", visible: true, allow_multiple: false });
+    setImageFile(null);
+    fetchItems();
+  };
+
   const renderCategory = (category: "A" | "B") => {
     const filtered = items.filter((item) => item.category === category);
 
@@ -138,8 +177,7 @@ export default function AdminItems() {
                               onChange={() =>
                                 handleFieldChange(item.id, "visible", !(edited.visible ?? item.visible ?? true))
                               }
-                            />{" "}
-                            사용자에게 보임
+                            /> 사용자에게 보임
                           </label>
                           {item.category === "A" && (
                             <label>
@@ -153,8 +191,7 @@ export default function AdminItems() {
                                     !(edited.allow_multiple ?? item.allow_multiple ?? false)
                                   )
                                 }
-                              />{" "}
-                              중복 선택 허용
+                              /> 중복 선택 허용
                             </label>
                           )}
                         </div>
@@ -183,7 +220,7 @@ export default function AdminItems() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-6">
+    <div className="max-w-3xl mx-auto p-6 space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-bold text-gray-800">기념품 목록 관리</h1>
         <Button onClick={() => navigate("/admin")} variant="subtle">
@@ -191,6 +228,65 @@ export default function AdminItems() {
         </Button>
       </div>
 
+      {/* ➕ 새 기념품 추가 */}
+      <div className="border rounded p-4 shadow bg-white space-y-3">
+        <h2 className="font-semibold text-lg">새 기념품 추가</h2>
+        <Input
+          placeholder="기념품 이름"
+          value={newItem.name ?? ""}
+          onChange={(e) => setNewItem((prev) => ({ ...prev, name: e.target.value }))}
+        />
+        <Textarea
+          placeholder="기념품 설명 (선택)"
+          value={newItem.description ?? ""}
+          onChange={(e) => setNewItem((prev) => ({ ...prev, description: e.target.value }))}
+        />
+        <select
+          value={newItem.category}
+          onChange={(e) => setNewItem((prev) => ({ ...prev, category: e.target.value as "A" | "B" }))}
+          className="border rounded px-3 py-2 w-full"
+        >
+          <option value="A">A 품목</option>
+          <option value="B">B 품목</option>
+        </select>
+        <label className="flex items-center gap-2 text-sm text-gray-600">
+          <Upload size={16} />
+          이미지 업로드:
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+          />
+        </label>
+        <div className="text-sm flex gap-4">
+          <label>
+            <input
+              type="checkbox"
+              checked={newItem.visible ?? true}
+              onChange={() =>
+                setNewItem((prev) => ({ ...prev, visible: !(prev.visible ?? true) }))
+              }
+            /> 사용자에게 보임
+          </label>
+          {newItem.category === "A" && (
+            <label>
+              <input
+                type="checkbox"
+                checked={newItem.allow_multiple ?? false}
+                onChange={() =>
+                  setNewItem((prev) => ({
+                    ...prev,
+                    allow_multiple: !(prev.allow_multiple ?? false),
+                  }))
+                }
+              /> 중복 선택 허용
+            </label>
+          )}
+        </div>
+        <Button onClick={handleNewItemAdd}>기념품 추가</Button>
+      </div>
+
+      {/* 정렬 및 수정 */}
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="space-y-8">
           <div>
