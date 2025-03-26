@@ -22,8 +22,11 @@ export default function AdminPage() {
     <div className="flex h-screen">
       {/* Sidebar */}
       <div
-        className={\`fixed top-0 left-0 h-full bg-white shadow-lg z-40 transform transition-transform duration-300
-          \${sidebarOpen ? "translate-x-0" : "-translate-x-full"} w-64 p-4\`}
+        className={
+          "fixed top-0 left-0 h-full bg-white shadow-lg z-40 transform transition-transform duration-300 " +
+          (sidebarOpen ? "translate-x-0" : "-translate-x-full") +
+          " w-64 p-4"
+        }
       >
         <h2 className="text-lg font-bold mb-4">관리자 메뉴</h2>
         <div className="space-y-2">
