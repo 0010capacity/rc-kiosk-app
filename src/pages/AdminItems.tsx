@@ -94,7 +94,8 @@ export default function AdminItems() {
           .update({ sort_order: i + 1 })
           .eq("id", item.id)
       )
-    );
+      </div>
+  );
     fetchItems();
   };
 
@@ -136,12 +137,14 @@ export default function AdminItems() {
     const filtered = items.filter((item) => item.category === category);
 
     return (
+    <div className="p-6 space-y-6">
       <Droppable droppableId={category} type={category}>
         {(provided) => (
           <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-4">
             {filtered.map((item, index) => {
               const edited = editedItems[item.id] || {};
               return (
+    <div className="p-6 space-y-6">
                 <Draggable draggableId={item.id} index={index} key={item.id}>
                   {(provided, snapshot) => (
                     <div
@@ -270,5 +273,6 @@ export default function AdminItems() {
           </div>
         </div>
       </DragDropContext>
+    </div>
   );
 }
