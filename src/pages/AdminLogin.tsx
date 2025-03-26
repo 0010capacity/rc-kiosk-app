@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/lib/supabaseConfig";
+import { supabase } from "@supabase/supabase-js";
 
 export default function AdminLogin({ onBack }: { onBack: () => void }) {
   const [username, setUsername] = useState("");
