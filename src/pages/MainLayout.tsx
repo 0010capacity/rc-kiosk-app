@@ -36,7 +36,7 @@ export default function MainLayout() {
   const renderTitle = () => {
     switch (activeTab) {
       case "records":
-        return "기록 보기";
+        return "선택 기록";
       case "items":
         return "상품 관리";
       case "login":
@@ -109,7 +109,7 @@ export default function MainLayout() {
                   className="w-full justify-start"
                   onClick={() => setActiveTab("records")}
                 >
-                  <ClipboardList className="mr-2 h-4 w-4" />기록 보기
+                  <ClipboardList className="mr-2 h-4 w-4" />선택 기록
                 </Button>
                 <Button
                   variant={activeTab === "items" ? "default" : "outline"}
