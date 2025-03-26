@@ -121,7 +121,7 @@ export default function MainLayout() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={() => setSidebarOpen(!sidebarOpen)} className="fixed top-4 left-4 z-50"
             >
               <Menu />
             </Button>
