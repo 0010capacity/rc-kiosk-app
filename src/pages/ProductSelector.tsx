@@ -222,7 +222,10 @@ export default function ProductSelector() {
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        <label htmlFor="username" className="text-gray-700 font-medium">
+        <label
+          htmlFor="username"
+          className="text-gray-700 font-medium text-base"
+        >
           이름을 입력하세요
         </label>
         <Input
@@ -230,9 +233,10 @@ export default function ProductSelector() {
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
           placeholder="이름 입력"
-          className="w-full max-w-sm"
+          className="w-full max-w-sm text-base"
         />
       </div>
+
 
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">A 품목</h2>

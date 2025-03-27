@@ -40,18 +40,20 @@ export default function AdminLogin({ onBack }: { onBack: () => void }) {
           placeholder="아이디"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          className="text-base"
         />
         <Input
           type="password"
           placeholder="비밀번호"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="text-base"
         />
         <div className="flex justify-between">
-          <Button onClick={() => onBack()} variant="outline">
+          <Button onClick={() => onBack()} variant="outline" className="text-base">
             돌아가기
           </Button>
-          <Button onClick={handleLogin}>
+          <Button onClick={handleLogin} className="text-base">
             로그인
           </Button>
         </div>
