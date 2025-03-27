@@ -164,10 +164,13 @@ export default function AdminItems() {
                         <Input
                           value={edited.name ?? item.name}
                           onChange={(e) => handleFieldChange(item.id, "name", e.target.value)}
+                          className="text-base"
                         />
+
                         <Textarea
                           value={edited.description ?? item.description ?? ""}
                           onChange={(e) => handleFieldChange(item.id, "description", e.target.value)}
+                          className="text-base"
                         />
                         <div className="text-sm flex gap-4">
                           <label>
@@ -223,16 +226,17 @@ export default function AdminItems() {
     <div className="max-w-3xl mx-auto p-6 space-y-8">
       {/* ➕ 새 기념품 추가 */}
       <div className="border rounded p-4 shadow bg-white space-y-3">
-        
         <Input
           placeholder="기념품 이름"
           value={newItem.name ?? ""}
           onChange={(e) => setNewItem((prev) => ({ ...prev, name: e.target.value }))}
+          className="text-base"
         />
         <Textarea
           placeholder="기념품 설명 (선택)"
           value={newItem.description ?? ""}
           onChange={(e) => setNewItem((prev) => ({ ...prev, description: e.target.value }))}
+          className="text-base"
         />
         <select
           value={newItem.category}
