@@ -19,9 +19,13 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<
-    "selector" | "records" | "items" | "login"
-  >("selector");
+  const [activeTab, setActiveTab] = useState<"selector" | "records" | "items" | "login">(() => {
+    return (localStorage.getItem("activeTab") as any) || "selector";
+  });
+  
+  useEffect(() => {
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);  
 
   useEffect(() => {
     setIsAdmin(sessionStorage.getItem("isAdmin") === "true");
