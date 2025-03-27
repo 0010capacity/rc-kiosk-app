@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
-  ArrowLeft,
   ClipboardList,
   PackageOpen,
   Gift,
@@ -34,6 +33,8 @@ export default function MainLayout() {
   );
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const selectedCenterName = centers.find(c => c.id === selectedCenter)?.name || "";
 
   useEffect(() => {
@@ -58,27 +59,23 @@ export default function MainLayout() {
     localStorage.setItem("activeTab", activeTab);
   }, [activeTab]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleLogout = () => {
     sessionStorage.removeItem("isAdmin");
     setIsAdmin(false);
     setActiveTab("selector");
   };
-
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setDropdownOpen(false);
-    };
-
-    if (dropdownOpen) {
-      document.addEventListener("click", handleClickOutside);
-    } else {
-      document.removeEventListener("click", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [dropdownOpen]);
 
   const renderTitle = () => {
     switch (activeTab) {
@@ -113,14 +110,12 @@ export default function MainLayout() {
         return <ProductSelector />;
     }
   };
-  
 
   return (
     <div
       className="flex min-h-screen relative"
       onClick={() => sidebarOpen && setSidebarOpen(false)}
     >
-      {/* Sidebar Toggle Button */}
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -131,7 +126,6 @@ export default function MainLayout() {
         <Menu />
       </button>
 
-      {/* Sidebar */}
       <div
         className={
           "fixed top-0 left-0 h-full bg-white shadow-lg z-40 transform transition-transform duration-300 " +
@@ -199,14 +193,12 @@ export default function MainLayout() {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 overflow-auto p-4 w-full">
         <h1 className="text-2xl font-bold text-center mb-2">{renderTitle()}</h1>
 
-        {/* 드롭다운 위치 변경: 타이틀 하단에 렌더 */}
         {activeTab === "selector" && (
-          <div className="flex justify-center mb-6" onClick={(e) => e.stopPropagation()}>
-            <div className="relative inline-block text-left">
+          <div className="flex justify-center mb-6">
+            <div className="relative inline-block text-left" ref={dropdownRef}>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
