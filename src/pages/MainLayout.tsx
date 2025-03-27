@@ -220,7 +220,43 @@ export default function MainLayout() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto p-4 w-full">
-        <h1 className="text-2xl font-bold text-center mb-6">{renderTitle()}</h1>
+        <h1 className="text-2xl font-bold text-center mb-2">{renderTitle()}</h1>
+
+        {/* 드롭다운 위치 변경: 타이틀 하단에 렌더 */}
+        {activeTab === "selector" && (
+          <div className="flex justify-center mb-6">
+            <div className="relative inline-block text-left">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDropdownOpen(!dropdownOpen);
+                }}
+                className="text-base px-2 py-1 bg-transparent flex items-center gap-1"
+              >
+                {selectedCenterName || "헌혈 장소 선택"}
+                <ChevronDown className="w-4 h-4 text-gray-500" />
+              </button>
+              {dropdownOpen && (
+                <div className="absolute left-0 mt-2 w-48 bg-white border rounded shadow z-50">
+                  {centers.map((center) => (
+                    <button
+                      key={center.id}
+                      className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCenter(center.id);
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      {center.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {renderContent()}
       </div>
     </div>
