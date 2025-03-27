@@ -64,6 +64,22 @@ export default function MainLayout() {
     setActiveTab("selector");
   };
 
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setDropdownOpen(false);
+    };
+
+    if (dropdownOpen) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dropdownOpen]);
+
   const renderTitle = () => {
     switch (activeTab) {
       case "records":
@@ -189,7 +205,7 @@ export default function MainLayout() {
 
         {/* 드롭다운 위치 변경: 타이틀 하단에 렌더 */}
         {activeTab === "selector" && (
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-6" onClick={(e) => e.stopPropagation()}>
             <div className="relative inline-block text-left">
               <button
                 onClick={(e) => {
