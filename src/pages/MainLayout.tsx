@@ -25,11 +25,11 @@ export default function MainLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "selector" | "records" | "items" | "login"
-  >(() => localStorage.getItem("activeTab") as any || "selector");
+  >(() => sessionStorage.getItem("activeTab") as any || "selector");
 
   const [centers, setCenters] = useState<{ id: string; name: string }[]>([]);
   const [selectedCenter, setSelectedCenter] = useState<string>(() =>
-    localStorage.getItem("selectedCenter") || ""
+    sessionStorage.getItem("selectedCenter") || ""
   );
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
