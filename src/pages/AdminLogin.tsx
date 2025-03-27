@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@supabase/supabase-js";
@@ -6,15 +6,20 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-export default function AdminLogin({ onBack }: { onBack: () => void }) {
+interface AdminLoginProps {
+  onBack: () => void;
+  onLoginSuccess: () => void;
+}
+
+export default function AdminLogin({ onBack, onLoginSuccess }: AdminLoginProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     const { data, error } = await supabase
-      .from("center_auth")
+      .from("user_auth")
       .select("password")
-      .eq("id", username)
+      .eq("username", username)
       .single();
 
     if (error) {
@@ -25,7 +30,7 @@ export default function AdminLogin({ onBack }: { onBack: () => void }) {
 
     if (data && data.password === password) {
       sessionStorage.setItem("isAdmin", "true");
-      onBack();
+      onLoginSuccess();
     } else {
       alert("아이디 또는 비밀번호가 틀렸습니다.");
     }
@@ -34,7 +39,7 @@ export default function AdminLogin({ onBack }: { onBack: () => void }) {
   return (
     <div className="flex justify-center items-center h-full relative">
       <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow space-y-4">
-        <h1 className="text-xl font-semibold text-center">로그인</h1>  
+        <h1 className="text-xl font-semibold text-center">로그인</h1>
         <Input
           type="text"
           placeholder="아이디"
@@ -50,7 +55,7 @@ export default function AdminLogin({ onBack }: { onBack: () => void }) {
           className="text-base"
         />
         <div className="flex justify-between">
-          <Button onClick={() => onBack()} variant="outline" className="text-base">
+          <Button onClick={onBack} variant="outline" className="text-base">
             돌아가기
           </Button>
           <Button onClick={handleLogin} className="text-base">
