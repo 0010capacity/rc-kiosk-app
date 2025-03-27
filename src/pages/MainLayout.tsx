@@ -61,7 +61,7 @@ export default function MainLayout() {
 
   return (
     <div
-      className="flex h-screen relative"
+      className="flex min-h-screen relative"
       onClick={() => sidebarOpen && setSidebarOpen(false)}
     >
       {/* Sidebar Toggle Button */}
