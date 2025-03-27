@@ -115,41 +115,6 @@ export default function MainLayout() {
         <Menu />
       </button>
 
-      {/* 커스텀 헌혈 장소 선택 드롭다운 (기념품 선택 탭에서만) */}
-      {activeTab === "selector" && (
-        <div className="absolute top-4 right-4 z-50">
-          <div className="relative inline-block text-left">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setDropdownOpen(!dropdownOpen);
-              }}
-              className="text-base px-2 py-1 bg-transparent flex items-center gap-1"
-            >
-              {selectedCenterName || "헌혈 장소 선택"}
-              <ChevronDown className="w-4 h-4 text-gray-500" />
-            </button>
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-50">
-                {centers.map((center) => (
-                  <button
-                    key={center.id}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedCenter(center.id);
-                      setDropdownOpen(false);
-                    }}
-                  >
-                    {center.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Sidebar */}
       <div
         className={
