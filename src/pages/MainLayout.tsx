@@ -31,6 +31,9 @@ export default function MainLayout() {
   const [selectedCenter, setSelectedCenter] = useState<string>(() =>
     localStorage.getItem("selectedCenter") || ""
   );
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const selectedCenterName = centers.find(c => c.id === selectedCenter)?.name || "";
 
   useEffect(() => {
     setIsAdmin(sessionStorage.getItem("isAdmin") === "true");
@@ -102,21 +105,36 @@ export default function MainLayout() {
         <Menu />
       </button>
 
-      {/* 헌혈 장소 드롭다운 */}
-      <div className="absolute top-4 right-4 z-50 bg-white border rounded px-4 py-2 shadow">
-        <label className="text-sm font-medium mr-2">현재 헌혈 장소:</label>
-        <select
-          className="text-sm border rounded px-2 py-1"
-          value={selectedCenter}
-          onChange={(e) => setSelectedCenter(e.target.value)}
-        >
-          <option value="">선택하세요</option>
-          {centers.map((center) => (
-            <option key={center.id} value={center.id}>
-              {center.name}
-            </option>
-          ))}
-        </select>
+      {/* 커스텀 헌혈 장소 선택 드롭다운 */}
+      <div className="absolute top-4 right-4 z-50">
+        <div className="relative inline-block text-left">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setDropdownOpen(!dropdownOpen);
+            }}
+            className="text-lg font-bold px-4 py-2 bg-white border rounded shadow flex items-center gap-2"
+          >
+            {selectedCenterName || "헌혈 장소 선택"} <span>⌄</span>
+          </button>
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-50">
+              {centers.map((center) => (
+                <button
+                  key={center.id}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedCenter(center.id);
+                    setDropdownOpen(false);
+                  }}
+                >
+                  {center.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Sidebar */}
