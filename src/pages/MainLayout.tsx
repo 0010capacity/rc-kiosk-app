@@ -26,11 +26,11 @@ export default function MainLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "selector" | "records" | "items" | "login"
-  >(() => sessionStorage.getItem("activeTab") as any || "selector");
+  >(() => localStorage.getItem("activeTab") as any || "selector");
 
   const [centers, setCenters] = useState<{ id: string; name: string }[]>([]);
   const [selectedCenter, setSelectedCenter] = useState<string>(() =>
-    sessionStorage.getItem("selectedCenter") || ""
+    localStorage.getItem("selectedCenter") || ""
   );
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -114,7 +114,7 @@ export default function MainLayout() {
               e.stopPropagation();
               setDropdownOpen(!dropdownOpen);
             }}
-            className="text-base px-4 py-2 bg-white border rounded shadow flex items-center gap-1"
+            className="text-base px-2 py-1 bg-transparent flex items-center gap-1"
           >
             {selectedCenterName || "헌혈 장소 선택"}
             <ChevronDown className="w-4 h-4 text-gray-500" />
