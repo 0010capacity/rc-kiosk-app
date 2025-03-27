@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@supabase/supabase-js";
@@ -12,9 +12,9 @@ export default function AdminLogin({ onBack }: { onBack: () => void }) {
 
   const handleLogin = async () => {
     const { data, error } = await supabase
-      .from("user_auth")
+      .from("center_auth")
       .select("password")
-      .eq("username", username)
+      .eq("id", username)
       .single();
 
     if (error) {
@@ -25,14 +25,14 @@ export default function AdminLogin({ onBack }: { onBack: () => void }) {
 
     if (data && data.password === password) {
       sessionStorage.setItem("isAdmin", "true");
-      window.location.reload();
+      onBack();
     } else {
       alert("아이디 또는 비밀번호가 틀렸습니다.");
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-full">
+    <div className="flex justify-center items-center h-full relative">
       <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow space-y-4">
         <h1 className="text-xl font-semibold text-center">로그인</h1>  
         <Input
