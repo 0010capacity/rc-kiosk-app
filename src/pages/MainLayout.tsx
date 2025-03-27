@@ -9,6 +9,7 @@ import {
   LogIn,
   LogOut,
   Menu,
+  ChevronDown
 } from "lucide-react";
 import ProductSelector from "./ProductSelector";
 import AdminRecords from "./AdminRecords";
@@ -113,9 +114,10 @@ export default function MainLayout() {
               e.stopPropagation();
               setDropdownOpen(!dropdownOpen);
             }}
-            className="text-lg font-bold px-4 py-2 bg-white border rounded shadow flex items-center gap-2"
+            className="text-base px-4 py-2 bg-white border rounded shadow flex items-center gap-1"
           >
-            {selectedCenterName || "헌혈 장소 선택"} <span>⌄</span>
+            {selectedCenterName || "헌혈 장소 선택"}
+            <ChevronDown className="w-4 h-4 text-gray-500" />
           </button>
           {dropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-50">
