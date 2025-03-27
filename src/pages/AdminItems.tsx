@@ -287,11 +287,11 @@ export default function AdminItems() {
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="space-y-8">
           <div>
-            
+            <h2 className="text-xl font-semibold mb-2">A 품목</h2>
             {renderCategory("A")}
           </div>
           <div>
-            
+            <h2 className="text-xl font-semibold mb-2">B 품목</h2>
             {renderCategory("B")}
           </div>
         </div>
