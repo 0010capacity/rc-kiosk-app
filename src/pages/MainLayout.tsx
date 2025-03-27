@@ -14,22 +14,45 @@ import ProductSelector from "./ProductSelector";
 import AdminRecords from "./AdminRecords";
 import AdminItems from "./AdminItems";
 import AdminLogin from "./AdminLogin";
+import { createClient } from "@supabase/supabase-js";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function MainLayout() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"selector" | "records" | "items" | "login">(() => {
-    return (localStorage.getItem("activeTab") as any) || "selector";
-  });
-  
-  useEffect(() => {
-    localStorage.setItem("activeTab", activeTab);
-  }, [activeTab]);  
+  const [activeTab, setActiveTab] = useState<
+    "selector" | "records" | "items" | "login"
+  >(() => localStorage.getItem("activeTab") as any || "selector");
+
+  const [centers, setCenters] = useState<{ id: string; name: string }[]>([]);
+  const [selectedCenter, setSelectedCenter] = useState<string>(() =>
+    localStorage.getItem("selectedCenter") || ""
+  );
 
   useEffect(() => {
     setIsAdmin(sessionStorage.getItem("isAdmin") === "true");
   }, []);
+
+  useEffect(() => {
+    const fetchCenters = async () => {
+      const { data, error } = await supabase.from("donation_centers").select("id, name");
+      if (!error && data) {
+        setCenters(data);
+      }
+    };
+    fetchCenters();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("selectedCenter", selectedCenter);
+  }, [selectedCenter]);
+
+  useEffect(() => {
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
 
   const handleLogout = () => {
     sessionStorage.removeItem("isAdmin");
@@ -74,10 +97,27 @@ export default function MainLayout() {
           e.stopPropagation();
           setSidebarOpen(!sidebarOpen);
         }}
-        className="fixed top-4 left-4 z-30 p-2 bg-white rounded-full shadow-md"
+        className="fixed top-4 left-4 z-0 p-2 bg-white rounded-full shadow-md"
       >
         <Menu />
       </button>
+
+      {/* 헌혈 장소 드롭다운 */}
+      <div className="absolute top-4 right-4 z-50 bg-white border rounded px-4 py-2 shadow">
+        <label className="text-sm font-medium mr-2">현재 헌혈 장소:</label>
+        <select
+          className="text-sm border rounded px-2 py-1"
+          value={selectedCenter}
+          onChange={(e) => setSelectedCenter(e.target.value)}
+        >
+          <option value="">선택하세요</option>
+          {centers.map((center) => (
+            <option key={center.id} value={center.id}>
+              {center.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Sidebar */}
       <div
