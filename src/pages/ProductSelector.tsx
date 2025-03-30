@@ -30,7 +30,7 @@ export default function ProductSelector() {
   useEffect(() => {
     async function fetchLocation() {
       const { data, error } = await supabase
-        .from("donation_centers")
+        .from("donation_locations")
         .select("name")
         .eq("id", locationId)
         .single();
