@@ -11,12 +11,14 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 interface GiftItem {
   id: string;
   name: string;
-  category: "A" | "B";
   image_url?: string;
   description?: string;
-  allow_multiple?: boolean;
-  visible?: boolean;
+  category: "A" | "B";
+  sort_order: number;
+  allow_multiple: boolean;
+  visible: boolean;
 }
+
 
 export default function ProductSelector() {
   const { locationId } = useParams();
@@ -47,18 +49,46 @@ export default function ProductSelector() {
 
   useEffect(() => {
     async function fetchGiftItems() {
-      const { data } = await supabase
-        .from("gift_items")
-        .select("*")
+      if (!locationId) return;
+  
+      const { data, error } = await supabase
+        .from("location_gift_items")
+        .select(`
+          gift_item_id,
+          category,
+          sort_order,
+          allow_multiple,
+          visible,
+          gift_items (
+            id,
+            name,
+            image_url,
+            description
+          )
+        `)
+        .eq("location_id", locationId)
         .eq("visible", true)
         .order("category")
         .order("sort_order");
-
-      setGiftItems((data as GiftItem[]) || []);
+  
+      if (!error && data) {
+        const mapped = data.map((entry: any) => ({
+          id: entry.gift_items.id,
+          name: entry.gift_items.name,
+          image_url: entry.gift_items.image_url,
+          description: entry.gift_items.description,
+          category: entry.category,
+          sort_order: entry.sort_order,
+          allow_multiple: entry.allow_multiple,
+          visible: entry.visible,
+        }));
+        setGiftItems(mapped);
+      }
     }
-
+  
     fetchGiftItems();
-  }, []);
+  }, [locationId]);
+  
 
   const aItems = giftItems.filter((item) => item.category === "A");
   const bItems = giftItems.filter((item) => item.category === "B");
