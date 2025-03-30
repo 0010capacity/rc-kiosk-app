@@ -29,21 +29,26 @@ export default function ProductSelector() {
 
   useEffect(() => {
     async function fetchLocation() {
+      console.log("📦 fetching location for ID:", locationId);
+  
       const { data, error } = await supabase
         .from("donation_locations")
         .select("name")
         .eq("id", locationId)
         .single();
-
+  
+      console.log("🧾 Supabase result:", { data, error });
+  
       if (!error && data) {
         setLocationName(data.name);
       } else {
         setLocationName("알 수 없는 장소");
       }
     }
-
+  
     if (locationId) fetchLocation();
   }, [locationId]);
+  
 
   useEffect(() => {
     async function fetchGiftItems() {
