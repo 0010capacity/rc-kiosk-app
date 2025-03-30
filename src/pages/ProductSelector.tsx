@@ -28,30 +28,22 @@ export default function ProductSelector() {
   const [showTooltipId, setShowTooltipId] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("🔥 ProductSelector mounted");
-    console.log("📍 locationId:", locationId);
-  
     async function fetchLocation() {
-      console.log("📦 fetching location for ID:", locationId);
       const { data, error } = await supabase
         .from("donation_locations")
         .select("name")
         .eq("id", locationId)
         .single();
-  
-      console.log("🧾 Supabase result:", { data, error });
-  
+
       if (!error && data) {
         setLocationName(data.name);
       } else {
         setLocationName("알 수 없는 장소");
       }
     }
-  
+
     if (locationId) fetchLocation();
   }, [locationId]);
-  
-  
 
   useEffect(() => {
     async function fetchGiftItems() {
@@ -70,13 +62,6 @@ export default function ProductSelector() {
 
   const aItems = giftItems.filter((item) => item.category === "A");
   const bItems = giftItems.filter((item) => item.category === "B");
-
-  const countA = selectedItems.filter((item) =>
-    aItems.some((a) => a.name === item)
-  ).length;
-  const countB = selectedItems.filter((item) =>
-    bItems.some((b) => b.name === item)
-  ).length;
 
   const isValidSelection = (itemName: string) => {
     const item = giftItems.find((i) => i.name === itemName);
@@ -233,7 +218,7 @@ export default function ProductSelector() {
             <p className="font-medium pt-2">📌 예외 사항</p>
             <ul className="list-disc pl-5">
               <li>
-                아래 A 품목은 동일 품목을 2개까지 선택하신 수 있습니다:&nbsp;
+                아래 A 품목은 동일 품목을 2개까지 선택하실 수 있습니다:&nbsp;
                 {aItems
                   .filter((i) => i.allow_multiple)
                   .map((i) => `‘${i.name}’`)
@@ -270,7 +255,7 @@ export default function ProductSelector() {
       <div>
         <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
           {selectedItems.length === 0 ? (
-            <p className="text-gray-400 text-center">아직 선택된 기본품이 없습니다.</p>
+            <p className="text-gray-400 text-center">아직 선택된 기념품이 없습니다.</p>
           ) : (
             <div className="grid grid-cols-2 gap-3">
               {Object.entries(itemCounts).map(([item, count], index) => (
