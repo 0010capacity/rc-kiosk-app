@@ -38,7 +38,7 @@ export default function ProductSelector() {
       if (!error && data) {
         setLocationName(data.name);
       } else {
-        setLocationName("알 수 없는 장소");
+        setLocationName(null);
       }
     }
 
@@ -117,6 +117,11 @@ export default function ProductSelector() {
 
   const handleSubmit = async () => {
     if (selectedItems.length !== 2 || !userName.trim()) return;
+
+    if (!locationId || !locationName) {
+      alert("헌혈 장소 정보를 불러오지 못해 저장할 수 없습니다.");
+      return;
+    }
 
     const { error } = await supabase.from("gift_records").insert([
       {
