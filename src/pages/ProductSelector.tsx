@@ -28,9 +28,11 @@ export default function ProductSelector() {
   const [showTooltipId, setShowTooltipId] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("🔥 ProductSelector mounted");
+    console.log("📍 locationId:", locationId);
+  
     async function fetchLocation() {
       console.log("📦 fetching location for ID:", locationId);
-  
       const { data, error } = await supabase
         .from("donation_locations")
         .select("name")
@@ -48,6 +50,7 @@ export default function ProductSelector() {
   
     if (locationId) fetchLocation();
   }, [locationId]);
+  
   
 
   useEffect(() => {
