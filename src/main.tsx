@@ -1,4 +1,4 @@
-// src/main.tsx
+import './index.css'; // ✅ Tailwind CSS 연결
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter, Routes, Route } from 'react-router-dom';
