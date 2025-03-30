@@ -19,6 +19,7 @@ interface GiftItem {
   visible: boolean;
 }
 
+
 export default function ProductSelector() {
   const { locationId } = useParams();
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ export default function ProductSelector() {
   useEffect(() => {
     async function fetchGiftItems() {
       if (!locationId) return;
-
+  
       const { data, error } = await supabase
         .from("location_gift_items")
         .select(`
@@ -69,7 +70,7 @@ export default function ProductSelector() {
         .eq("visible", true)
         .order("category")
         .order("sort_order");
-
+  
       if (!error && data) {
         const mapped = data.map((entry: any) => ({
           id: entry.gift_items.id,
@@ -84,9 +85,10 @@ export default function ProductSelector() {
         setGiftItems(mapped);
       }
     }
-
+  
     fetchGiftItems();
   }, [locationId]);
+  
 
   const aItems = giftItems.filter((item) => item.category === "A");
   const bItems = giftItems.filter((item) => item.category === "B");
@@ -262,6 +264,19 @@ export default function ProductSelector() {
         )}
       </div>
 
+      <div className="flex flex-col items-center gap-2">
+        <label htmlFor="username" className="text-gray-700 font-medium text-base">
+          이름을 입력하세요
+        </label>
+        <Input
+          id="username"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+          placeholder="이름 입력"
+          className="w-full max-w-sm text-base"
+        />
+      </div>
+
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">A 품목</h2>
         <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
@@ -297,19 +312,6 @@ export default function ProductSelector() {
             </div>
           )}
         </div>
-      </div>
-
-      <div className="flex flex-col items-center gap-2">
-        <label htmlFor="username" className="text-gray-700 font-medium text-base">
-          이름을 입력하세요
-        </label>
-        <Input
-          id="username"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-          placeholder="이름 입력"
-          className="w-full max-w-sm text-base"
-        />
       </div>
 
       <div className="flex justify-between gap-4">
