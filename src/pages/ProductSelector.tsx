@@ -19,6 +19,15 @@ interface GiftItem {
 }
 
 export default function ProductSelector() {
+  return (
+    <div className="flex-1 overflow-auto p-4 w-full">
+      <h1 className="text-2xl font-bold text-center mb-4">기념품 선택</h1>
+      <InnerContent />
+    </div>
+  );
+}
+
+function InnerContent() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [userName, setUserName] = useState<string>("");
   const [giftItems, setGiftItems] = useState<GiftItem[]>([]);
