@@ -208,7 +208,9 @@ export default function ProductSelector() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
       <h1 className="text-2xl font-bold text-center mb-1">기념품 선택</h1>
-      {locationName && (
+      {locationName === null ? (
+        <p className="text-center text-sm text-gray-400 mb-4">헌혈 장소 정보를 불러오는 중...</p>
+      ) : (
         <p className="text-center text-sm text-gray-500 mb-4">{locationName}</p>
       )}
 
