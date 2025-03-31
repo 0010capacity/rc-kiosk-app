@@ -163,7 +163,7 @@ export default function ProductSelector() {
     ]);
 
     if (!error) {
-      alert(`${userName}님 선택 완료!`);
+      alert(`${userName}님 선택 완료`);
       handleReset();
     } else {
       console.error("저장 실패:", error);
