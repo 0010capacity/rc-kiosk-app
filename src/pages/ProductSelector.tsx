@@ -178,6 +178,11 @@ export default function ProductSelector() {
     return counts;
   };
 
+  const sortedSelectedItems = [
+    ...selectedItems.filter((item) => aItems.some((a) => a.name === item)),
+    ...selectedItems.filter((item) => bItems.some((b) => b.name === item))
+  ];
+
   const itemCounts = getItemCounts(selectedItems);
   const canSubmit = selectedItems.length === 2 && userName.trim() !== "";
 
@@ -293,14 +298,12 @@ export default function ProductSelector() {
             <p className="text-gray-400 text-center">아직 선택된 기념품이 없습니다.</p>
           ) : (
             <div className="grid grid-cols-2 gap-3">
-              {Object.entries(itemCounts).map(([item, count], index) => (
+              {sortedSelectedItems.map((item, index) => (
                 <div
-                  key={index}
+                  key={`${item}-${index}`}
                   className="flex items-center justify-between gap-3 p-2 border rounded-lg bg-gray-50 shadow-inner"
                 >
-                  <div className="text-gray-700 text-sm font-medium">
-                    {item} {count > 1 ? `x${count}` : ""}
-                  </div>
+                  <div className="text-gray-700 text-sm font-medium">{item}</div>
                   <button
                     onClick={() => handleRemove(item)}
                     className="text-gray-400 hover:text-red-500"
