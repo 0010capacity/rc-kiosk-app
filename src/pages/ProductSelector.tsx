@@ -231,7 +231,7 @@ export default function ProductSelector() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8 relative">
       {showToast && (
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 mt-2 bg-green-500 text-white text-sm px-4 py-2 rounded shadow-lg animate-fade-in-out z-50">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white text-sm px-4 py-2 rounded shadow-lg animate-fade-in-out z-50">
           🎉 선택 완료!
         </div>
       )}
