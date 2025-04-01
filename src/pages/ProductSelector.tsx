@@ -19,7 +19,6 @@ interface GiftItem {
   visible: boolean;
 }
 
-
 export default function ProductSelector() {
   const { locationId } = useParams();
   const navigate = useNavigate();
@@ -28,6 +27,7 @@ export default function ProductSelector() {
   const [userName, setUserName] = useState<string>("");
   const [giftItems, setGiftItems] = useState<GiftItem[]>([]);
   const [showTooltipId, setShowTooltipId] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     async function fetchLocation() {
@@ -50,7 +50,7 @@ export default function ProductSelector() {
   useEffect(() => {
     async function fetchGiftItems() {
       if (!locationId) return;
-  
+
       const { data, error } = await supabase
         .from("location_gift_items")
         .select(`
@@ -70,7 +70,7 @@ export default function ProductSelector() {
         .eq("visible", true)
         .order("category")
         .order("sort_order");
-  
+
       if (!error && data) {
         const mapped = data.map((entry: any) => ({
           id: entry.gift_items.id,
@@ -85,11 +85,9 @@ export default function ProductSelector() {
         setGiftItems(mapped);
       }
     }
-  
+
     fetchGiftItems();
   }, [locationId]);
-  
-
   const aItems = giftItems.filter((item) => item.category === "A");
   const bItems = giftItems.filter((item) => item.category === "B");
 
@@ -163,83 +161,28 @@ export default function ProductSelector() {
     ]);
 
     if (!error) {
-      alert(`${userName}님 선택 완료`);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
       handleReset();
     } else {
       console.error("저장 실패:", error);
     }
   };
 
-  const getItemCounts = (items: string[]) => {
-    const counts: { [key: string]: number } = {};
-    items.forEach((item) => {
-      counts[item] = (counts[item] || 0) + 1;
-    });
-    return counts;
-  };
-
   const sortedSelectedItems = [
     ...selectedItems.filter((item) => aItems.some((a) => a.name === item)),
-    ...selectedItems.filter((item) => bItems.some((b) => b.name === item))
+    ...selectedItems.filter((item) => bItems.some((b) => b.name === item)),
   ];
 
-  const itemCounts = getItemCounts(selectedItems);
   const canSubmit = selectedItems.length === 2 && userName.trim() !== "";
-
-  const renderItemCard = (item: GiftItem) => (
-    <Button
-      key={item.name}
-      onClick={() => handleSelect(item.name)}
-      disabled={!isValidSelection(item.name)}
-      variant="outline"
-      className="flex flex-col items-center space-y-2 p-3 h-36 relative"
-      onMouseLeave={() => setShowTooltipId(null)}
-    >
-      <div
-        className="relative w-32 h-16"
-        onTouchStart={() => setShowTooltipId(item.id)}
-        onMouseEnter={() => setShowTooltipId(item.id)}
-      >
-        {item.image_url ? (
-          <img
-            src={item.image_url}
-            alt={item.name}
-            className="w-full h-full object-contain rounded shadow-inner"
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-200 rounded shadow-inner" />
-        )}
-
-        {item.allow_multiple && (
-          <span className="absolute top-1 right-1 text-[10px] bg-yellow-300 text-gray-800 px-1.5 py-0.5 rounded font-medium shadow-sm">
-            🔁 중복 선택 가능
-          </span>
-        )}
-
-        {item.description && showTooltipId === item.id && (
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-1 w-48 bg-black text-white text-xs rounded px-2 py-1 z-10 pointer-events-none text-center">
-            {item.description}
-          </div>
-        )}
-      </div>
-
-      <div className="flex items-center gap-1 justify-center mt-2">
-        <span className="text-sm text-center">{item.name}</span>
-        {item.description && (
-          <div
-            className="cursor-help text-xs text-gray-400"
-            onMouseEnter={() => setShowTooltipId(item.id)}
-            onTouchStart={() => setShowTooltipId(item.id)}
-          >
-            ℹ️
-          </div>
-        )}
-      </div>
-    </Button>
-  );
-
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-8">
+    <div className="max-w-2xl mx-auto p-6 space-y-8 relative">
+      {showToast && (
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 mt-2 bg-green-500 text-white text-sm px-4 py-2 rounded shadow-lg animate-fade-in-out z-50">
+          🎉 선택 완료!
+        </div>
+      )}
+
       <h1 className="text-2xl font-bold text-center mb-1">기념품 선택</h1>
       {locationName === null ? (
         <p className="text-center text-sm text-gray-400 mb-4">헌혈 장소 정보를 불러오는 중...</p>
