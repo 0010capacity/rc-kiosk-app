@@ -53,7 +53,8 @@ export default function ProductSelector() {
 
       const { data, error } = await supabase
         .from("location_gift_items")
-        .select(`
+        .select(
+          `
           gift_item_id,
           category,
           sort_order,
@@ -65,7 +66,8 @@ export default function ProductSelector() {
             image_url,
             description
           )
-        `)
+        `
+        )
         .eq("location_id", locationId)
         .eq("visible", true)
         .order("category")
@@ -182,11 +184,14 @@ export default function ProductSelector() {
       onClick={() => handleSelect(item.name)}
       disabled={!isValidSelection(item.name)}
       variant="outline"
-      className="flex flex-col items-center space-y-2 p-3 h-36 relative"
+      // *** 변경: 버튼 높이 증가 (h-36 -> h-44) ***
+      className="flex flex-col items-center space-y-2 p-3 h-44 relative"
       onMouseLeave={() => setShowTooltipId(null)}
     >
+      {/* *** 변경: 이미지 컨테이너 크기 증가 (w-32 h-16 -> w-48 h-24) *** */}
+      {/* 가로 2: 세로 1 비율을 유지하면서 크기를 키웠습니다. (w-48 = 12rem, h-24 = 6rem) */}
       <div
-        className="relative w-32 h-16"
+        className="relative w-48 h-24" // Tailwind: w-48 (12rem/192px), h-24 (6rem/96px)
         onTouchStart={() => setShowTooltipId(item.id)}
         onMouseEnter={() => setShowTooltipId(item.id)}
       >
@@ -194,25 +199,26 @@ export default function ProductSelector() {
           <img
             src={item.image_url}
             alt={item.name}
+            // object-contain 이 이미지를 컨테이너 비율에 맞게 조절해줍니다.
             className="w-full h-full object-contain rounded shadow-inner"
           />
         ) : (
           <div className="w-full h-full bg-gray-200 rounded shadow-inner" />
         )}
-  
+
         {item.allow_multiple && (
           <span className="absolute top-1 right-1 text-[10px] bg-yellow-300 text-gray-800 px-1.5 py-0.5 rounded font-medium shadow-sm">
             🔁 중복 선택 가능
           </span>
         )}
-  
+
         {item.description && showTooltipId === item.id && (
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-1 w-48 bg-black text-white text-xs rounded px-2 py-1 z-10 pointer-events-none text-center">
             {item.description}
           </div>
         )}
       </div>
-  
+
       <div className="flex items-center gap-1 justify-center mt-2">
         <span className="text-sm text-center">{item.name}</span>
         {item.description && (
@@ -227,7 +233,7 @@ export default function ProductSelector() {
       </div>
     </Button>
   );
-  
+
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8 relative">
       {showToast && (
