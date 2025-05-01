@@ -186,7 +186,7 @@ export default function ProductSelector() {
       onMouseLeave={() => setShowTooltipId(null)}
     >
       <div
-        className="relative w-full aspect-[2/1]"
+        className="relative w-full max-h-24 aspect-[2/1]"
         onTouchStart={() => setShowTooltipId(item.id)}
         onMouseEnter={() => setShowTooltipId(item.id)}
       >
