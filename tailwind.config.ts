@@ -9,6 +9,9 @@ export default {
         redCross: '#d62828',
         redCrossLight: '#e63946',
       },
+      fontFamily: {
+        sans: ['"Noto Sans KR"', 'sans-serif'],
+      },
       fontSize: {
         sm: '0.95rem',
         base: '1.05rem',
