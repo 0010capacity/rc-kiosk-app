@@ -197,8 +197,8 @@ export default function ProductSelector() {
       key={item.name}
       onClick={() => handleSelect(item.name)}
       disabled={!isValidSelection(item.name)}
-      variant="outline"
-      className="flex flex-col items-center space-y-2 p-3 h-36 relative"
+      variant="tile"
+      className="flex flex-col items-center space-y-2 p-3 h-36 relative transition-shadow hover:shadow-md focus:shadow-md"
       onMouseLeave={() => setShowTooltipId(null)}
     >
       <div
