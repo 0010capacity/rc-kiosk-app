@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { X } from "lucide-react";
+import Spinner from "@/components/Spinner";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
 
@@ -23,14 +24,17 @@ export default function ProductSelector() {
   const { locationId } = useParams();
   const navigate = useNavigate();
   const [locationName, setLocationName] = useState<string | null>(null);
+  const [loadingLocation, setLoadingLocation] = useState(true);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [userName, setUserName] = useState<string>("");
   const [giftItems, setGiftItems] = useState<GiftItem[]>([]);
+  const [loadingGiftItems, setLoadingGiftItems] = useState(true);
   const [showTooltipId, setShowTooltipId] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     async function fetchLocation() {
+      setLoadingLocation(true);
       const { data, error } = await supabase
         .from("donation_locations")
         .select("name")
@@ -42,6 +46,7 @@ export default function ProductSelector() {
       } else {
         setLocationName(null);
       }
+      setLoadingLocation(false);
     }
 
     if (locationId) fetchLocation();
@@ -50,6 +55,7 @@ export default function ProductSelector() {
   useEffect(() => {
     async function fetchGiftItems() {
       if (!locationId) return;
+      setLoadingGiftItems(true);
 
       const { data, error } = await supabase
         .from("location_gift_items")
@@ -84,6 +90,7 @@ export default function ProductSelector() {
         }));
         setGiftItems(mapped);
       }
+      setLoadingGiftItems(false);
     }
 
     fetchGiftItems();
@@ -237,10 +244,14 @@ export default function ProductSelector() {
       )}
 
       <h1 className="text-2xl font-bold text-center mb-1">기념품 선택</h1>
-      {locationName === null ? (
-        <p className="text-center text-sm text-gray-400 mb-4">헌혈 장소 정보를 불러오는 중...</p>
-      ) : (
+      {loadingLocation ? (
+        <div className="flex justify-center my-2">
+          <Spinner className="h-5 w-5 text-gray-400" />
+        </div>
+      ) : locationName ? (
         <p className="text-center text-sm text-gray-500 mb-4">{locationName}</p>
+      ) : (
+        <p className="text-center text-sm text-red-500 mb-4">헌혈 장소 정보를 불러오지 못했습니다.</p>
       )}
 
       <div className="rounded border p-3 bg-blue-50 text-sm text-blue-800 space-y-1">
@@ -280,12 +291,34 @@ export default function ProductSelector() {
 
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">A 품목</h2>
-        <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
+        {loadingGiftItems ? (
+          <div className="grid grid-cols-2 gap-4">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="h-36 rounded border bg-gray-100 animate-pulse"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
+        )}
       </div>
 
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">B 품목</h2>
-        <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
+        {loadingGiftItems ? (
+          <div className="grid grid-cols-2 gap-4">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="h-36 rounded border bg-gray-100 animate-pulse"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
+        )}
       </div>
 
       <div>
