@@ -7,6 +7,7 @@ export default {
     extend: {
       colors: {
         redCross: '#d62828',
+        redCrossLight: '#e63946',
       },
       fontSize: {
         sm: '0.95rem',
