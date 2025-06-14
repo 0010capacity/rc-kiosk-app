@@ -3,7 +3,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "ghost" | "subtle" | "danger";
+  variant?: "default" | "ghost" | "subtle" | "danger" | "outline";
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -15,7 +15,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       default: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
       ghost: "bg-transparent text-black hover:bg-gray-100 border border-gray-300 focus:ring-gray-300",
       subtle: "bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300 focus:ring-gray-300",
-      danger: "bg-red-100 text-red-700 hover:bg-red-200 border border-red-300 focus:ring-red-300"
+      danger: "bg-red-100 text-red-700 hover:bg-red-200 border border-red-300 focus:ring-red-300",
+      outline: "bg-transparent text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-gray-300"
     };
 
     return (
