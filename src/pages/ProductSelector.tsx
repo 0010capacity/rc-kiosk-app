@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import Spinner from "@/components/Spinner";
 import { createClient } from "@supabase/supabase-js";
@@ -192,15 +193,20 @@ export default function ProductSelector() {
 
   const canSubmit = selectedItems.length === 2 && userName.trim() !== "";
 
-  const renderItemCard = (item: GiftItem) => (
-    <Button
-      key={item.name}
-      onClick={() => handleSelect(item.name)}
-      disabled={!isValidSelection(item.name)}
-      variant="tile"
-      className="flex flex-col items-center space-y-2 p-3 h-36 relative transition-shadow hover:shadow-md focus:shadow-md"
-      onMouseLeave={() => setShowTooltipId(null)}
-    >
+  const renderItemCard = (item: GiftItem) => {
+    const isSelected = selectedItems.includes(item.name);
+    return (
+      <Button
+        key={item.name}
+        onClick={() => handleSelect(item.name)}
+        disabled={!isValidSelection(item.name)}
+        variant="outline"
+        className={cn(
+          "flex flex-col items-center space-y-2 p-3 h-36 relative",
+          isSelected && "border-redCross bg-red-50"
+        )}
+        onMouseLeave={() => setShowTooltipId(null)}
+      >
       <div
         className="relative w-full max-h-24 aspect-[2/1]"
         onTouchStart={() => setShowTooltipId(item.id)}
@@ -362,10 +368,10 @@ export default function ProductSelector() {
       </div>
 
       <div className="flex justify-between gap-4">
-        <Button onClick={handleReset} variant="subtle" className="w-1/2">
+        <Button onClick={handleReset} variant="secondary" className="w-1/2">
           초기화
         </Button>
-        <Button disabled={!canSubmit} onClick={handleSubmit} className="w-1/2">
+        <Button disabled={!canSubmit} onClick={handleSubmit} variant="primary" className="w-1/2">
           완료
         </Button>
       </div>
