@@ -255,12 +255,20 @@ export default function ProductSelector() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8 relative">
       {showToast && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white text-sm px-4 py-2 rounded shadow-lg animate-fade-in-out z-50">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white text-sm px-4 py-2 rounded shadow-lg animate-fade-in-out z-50"
+        >
           🎉 선택 완료!
         </div>
       )}
       {errorMessage && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white text-sm px-4 py-2 rounded shadow-lg animate-fade-in-out z-50">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="fixed top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white text-sm px-4 py-2 rounded shadow-lg animate-fade-in-out z-50"
+        >
           {errorMessage}
         </div>
       )}
