@@ -303,6 +303,7 @@ export default function ProductSelector() {
                   <button
                     onClick={() => handleRemove(item)}
                     className="text-gray-400 hover:text-red-500"
+                    aria-label="선택 항목 삭제"
                   >
                     <X size={16} />
                   </button>
