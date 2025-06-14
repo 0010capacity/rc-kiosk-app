@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { X } from "lucide-react";
+import { X, Check } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabaseConfig";
 
@@ -176,15 +176,20 @@ export default function ProductSelector() {
 
   const canSubmit = selectedItems.length === 2 && userName.trim() !== "";
 
-  const renderItemCard = (item: GiftItem) => (
-    <Button
-      key={item.name}
-      onClick={() => handleSelect(item.name)}
-      disabled={!isValidSelection(item.name)}
-      variant="outline"
-      className="flex flex-col items-center space-y-2 p-3 h-36 relative"
-      onMouseLeave={() => setShowTooltipId(null)}
-    >
+  const renderItemCard = (item: GiftItem) => {
+    const isSelected = selectedItems.includes(item.name);
+    return (
+      <Button
+        key={item.name}
+        onClick={() => handleSelect(item.name)}
+        disabled={!isValidSelection(item.name)}
+        aria-pressed={isSelected}
+        variant="outline"
+        className={`flex flex-col items-center space-y-2 p-3 h-36 relative ${
+          isSelected ? "bg-green-50 ring-2 ring-green-500" : ""
+        }`}
+        onMouseLeave={() => setShowTooltipId(null)}
+      >
       <div
         className="relative w-full max-h-24 aspect-[2/1]"
         onTouchStart={() => setShowTooltipId(item.id)}
@@ -211,6 +216,12 @@ export default function ProductSelector() {
             {item.description}
           </div>
         )}
+
+        {isSelected && (
+          <div className="absolute inset-0 flex items-center justify-center rounded bg-white/70">
+            <Check className="text-green-600" size={32} />
+          </div>
+        )}
       </div>
   
       <div className="flex items-center gap-1 justify-center mt-2">
@@ -226,7 +237,8 @@ export default function ProductSelector() {
         )}
       </div>
     </Button>
-  );
+    );
+  };
   
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8 relative">
