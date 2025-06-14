@@ -216,6 +216,7 @@ export default function ProductSelector() {
           <img
             src={item.image_url}
             alt={item.name}
+            loading="lazy"
             className="w-full h-full object-contain rounded shadow-inner"
           />
         ) : (
