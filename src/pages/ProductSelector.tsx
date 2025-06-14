@@ -28,6 +28,12 @@ export default function ProductSelector() {
   const [giftItems, setGiftItems] = useState<GiftItem[]>([]);
   const [showTooltipId, setShowTooltipId] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const showError = (message: string) => {
+    setErrorMessage(message);
+    setTimeout(() => setErrorMessage(null), 3000);
+  };
 
   useEffect(() => {
     async function fetchLocation() {
@@ -41,6 +47,7 @@ export default function ProductSelector() {
         setLocationName(data.name);
       } else {
         setLocationName(null);
+        showError("헌혈 장소 정보를 불러오지 못했습니다.");
       }
     }
 
@@ -83,6 +90,8 @@ export default function ProductSelector() {
           visible: entry.visible,
         }));
         setGiftItems(mapped);
+      } else {
+        showError("기념품 목록을 불러오지 못했습니다.");
       }
     }
 
@@ -165,7 +174,7 @@ export default function ProductSelector() {
       setTimeout(() => setShowToast(false), 3000);
       handleReset();
     } else {
-      console.error("저장 실패:", error);
+      showError("저장 중 오류가 발생했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -233,6 +242,11 @@ export default function ProductSelector() {
       {showToast && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white text-sm px-4 py-2 rounded shadow-lg animate-fade-in-out z-50">
           🎉 선택 완료!
+        </div>
+      )}
+      {errorMessage && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white text-sm px-4 py-2 rounded shadow-lg animate-fade-in-out z-50">
+          {errorMessage}
         </div>
       )}
 
