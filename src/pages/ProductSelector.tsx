@@ -314,7 +314,7 @@ export default function ProductSelector() {
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">A 품목</h2>
         {loadingGiftItems ? (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {Array.from({ length: 4 }).map((_, idx) => (
               <div
                 key={idx}
@@ -323,14 +323,14 @@ export default function ProductSelector() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4">{aItems.map(renderItemCard)}</div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">{aItems.map(renderItemCard)}</div>
         )}
       </div>
 
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-3">B 품목</h2>
         {loadingGiftItems ? (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {Array.from({ length: 4 }).map((_, idx) => (
               <div
                 key={idx}
@@ -339,7 +339,7 @@ export default function ProductSelector() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4">{bItems.map(renderItemCard)}</div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">{bItems.map(renderItemCard)}</div>
         )}
       </div>
 
