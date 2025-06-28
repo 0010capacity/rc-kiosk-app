@@ -11,5 +11,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path="/location/:locationId" element={<ProductSelector />} />
       </Routes>
     </HashRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
