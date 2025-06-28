@@ -15,11 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Create .env file
-        run: |
-          echo "VITE_SUPABASE_URL=${{ vars.SUPABASE_URL }}" >> .env
-          echo "VITE_SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}" >> .env
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -31,8 +26,6 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Add timestamp
-        run: echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > ./dist/.deploy-time
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
