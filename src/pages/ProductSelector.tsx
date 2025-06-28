@@ -203,7 +203,7 @@ export default function ProductSelector() {
         variant="outline"
         className={cn(
           "flex flex-col items-center space-y-2 p-3 h-36 relative",
-          isSelected && "border-redCross bg-red-50"
+          isSelected && "border-redCrossRed bg-red-50"
         )}
         onMouseLeave={() => setShowTooltipId(null)}
       >
