@@ -1,5 +1,8 @@
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}"
+  ],
   theme: {
     extend: {
       colors: {
@@ -28,13 +31,13 @@ export default {
           '0%': { backgroundColor: '#fef08a' }, // yellow-100
           '50%': { backgroundColor: '#fde68a' }, // yellow-200
           '100%': { backgroundColor: '#fff' },
-        },
+        }
       },
       animation: {
         'fade-in-out': 'fadeInOut 2s ease-in-out',
         'pulse-once': 'pulseOnce 1.5s ease-in-out',
-      },
-    },
+      }
+    }
   },
   plugins: [],
 };
