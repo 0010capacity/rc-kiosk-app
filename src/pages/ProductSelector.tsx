@@ -307,11 +307,14 @@ export default function ProductSelector() {
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        <label htmlFor="username" className="text-gray-700 font-medium text-base">
+        <label htmlFor="donor-name" className="text-gray-700 font-medium text-base">
           이름을 입력하세요
         </label>
         <Input
-          id="username"
+          id="donor-name"
+          name="name"
+          type="text"
+          autoComplete="name"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
           placeholder="이름 입력"
