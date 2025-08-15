@@ -46,11 +46,22 @@ npm run preview
 
 ## Deployment
 
-To deploy the application using `gh-pages`, run:
+To deploy the application to Firebase Hosting, first ensure you have built the application for production:
+
+```bash
+npm run build
+```
+
+Then, run the deploy command:
 
 ```bash
 npm run deploy
 ```
+
+This command will deploy the contents of the `dist` directory to Firebase Hosting.
+
+**Note on Firebase Hosting Configuration:**
+The `firebase.json` file is configured to serve the `dist` directory and includes rewrite rules to handle client-side routing for single-page applications, ensuring that all paths are routed to `index.html`.
 
 # Development Conventions
 
