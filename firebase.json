@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "redcross-kiosk-user",
     "public": "dist",
     "ignore": [
       "firebase.json",
